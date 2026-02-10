@@ -169,27 +169,22 @@ function showError(msg, err) {
   document.getElementById("err-detail").textContent = msg + (err ? "\n\n" + (err.stack || err.message || String(err)) : "");
 }
 try {
-
-// ErrorBoundary - catches React render errors
 class ErrorBoundary extends React.Component {
   constructor(props) { super(props); this.state = { hasError: false, error: null }; }
   static getDerivedStateFromError(error) { return { hasError: true, error: error }; }
-  componentDidCatch(error, info) {
-    console.error("React render error:", error, info);
-  }
+  componentDidCatch(error, info) { console.error("React render error:", error, info); }
   render() {
     if (this.state.hasError) {
       return React.createElement("div", {style:{position:"fixed",inset:0,background:"#1a365d",color:"#fff",fontFamily:"system-ui",padding:24,zIndex:10000,overflow:"auto"}},
-        React.createElement("h2", {style:{color:"#f87171",fontSize:20,marginBottom:12}}, "⚠️ 應用程式錯誤"),
-        React.createElement("pre", {style:{background:"rgba(0,0,0,.3)",padding:12,borderRadius:8,fontSize:11,maxHeight:"50vh",overflow:"auto",whiteSpace:"pre-wrap",wordBreak:"break-all"}}, 
+        React.createElement("h2", {style:{color:"#f87171",fontSize:20,marginBottom:12}}, "\u26A0\uFE0F \u61C9\u7528\u7A0B\u5F0F\u932F\u8AA4"),
+        React.createElement("pre", {style:{background:"rgba(0,0,0,.3)",padding:12,borderRadius:8,fontSize:11,maxHeight:"50vh",overflow:"auto",whiteSpace:"pre-wrap",wordBreak:"break-all"}},
           String(this.state.error) + "\n\n" + (this.state.error && this.state.error.stack ? this.state.error.stack : "")),
-        React.createElement("button", {onClick:function(){location.reload()},style:{padding:"8px 24px",borderRadius:6,border:"none",background:"#60A5FA",color:"#fff",fontSize:14,cursor:"pointer",marginTop:16}}, "重新載入")
+        React.createElement("button", {onClick:function(){location.reload()},style:{padding:"8px 24px",borderRadius:6,border:"none",background:"#60A5FA",color:"#fff",fontSize:14,cursor:"pointer",marginTop:16}}, "\u91CD\u65B0\u8F09\u5165")
       );
     }
     return this.props.children;
   }
 }
-
 const {
   useState,
   useMemo,
@@ -1196,6 +1191,7 @@ const css = `
     .form-grid { grid-template-columns: 1fr !important; }
     .form-grid-2 { grid-template-columns: 1fr !important; }
     .header-title { font-size: 16px !important; }
+    header { padding-top: env(safe-area-inset-top, 0) !important; }
     .sidebar-desktop { display: none !important; }
     .main-content { margin-left: 0 !important; }
     .bottom-nav { display: flex !important; }
@@ -1540,13 +1536,67 @@ const collectAllSNs = (orders, customers) => {
     const c = customers.find(x => x.id === o.customer_id);
     (o.items || []).forEach(item => {
       (item.serial_numbers || []).filter(Boolean).forEach(sn => {
+        const shipDate = o.actual_ship_date || (["SHIPPED", "COMPLETED"].includes(o.status) ? o.expected_ship_date : "");
+        const wStart = shipDate || "";
+        let wEnd = "";
+        if (wStart) {
+          const d = new Date(wStart);
+          d.setFullYear(d.getFullYear() + 1);
+          wEnd = d.toISOString().slice(0, 10);
+        }
         r.push({
           sn,
           product_id: item.product_id,
           product_name: item.product_name,
           order_id: o.id,
           customer_id: o.customer_id,
-          customer_name: c?.company_name || o.customer_id
+          customer_name: c?.company_name || o.customer_id,
+          customer_site: o.ship_to || "",
+          ship_date: shipDate,
+          warranty_start: wStart,
+          warranty_end: wEnd,
+          order_status: o.status
+        });
+      });
+    });
+  });
+  return r;
+};
+const collectEquipment = (orders, customers, serviceTickets, shipments) => {
+  const r = [];
+  orders.forEach(o => {
+    const hasDeliveredShipment = (shipments || []).some(s => s.order_id === o.id && s.status === "DELIVERED");
+    if (!["SHIPPED", "COMPLETED"].includes(o.status) && !hasDeliveredShipment) return;
+    const c = customers.find(x => x.id === o.customer_id);
+    (o.items || []).forEach(item => {
+      (item.serial_numbers || []).filter(Boolean).forEach(sn => {
+        const shipDate = o.actual_ship_date || o.expected_ship_date || "";
+        let wEnd = "";
+        if (shipDate) {
+          const d = new Date(shipDate);
+          d.setFullYear(d.getFullYear() + 1);
+          wEnd = d.toISOString().slice(0, 10);
+        }
+        const tickets = serviceTickets.filter(t => t.serial_number === sn);
+        const openTickets = tickets.filter(t => !["CLOSED", "RESOLVED"].includes(t.status));
+        const warrantyDays = wEnd ? Math.ceil((new Date(wEnd) - new Date()) / 86400000) : null;
+        let eqStatus = "NORMAL";
+        if (openTickets.length > 0) eqStatus = "IN_SERVICE";else if (warrantyDays !== null && warrantyDays <= 0) eqStatus = "OUT_OF_WARRANTY";else if (warrantyDays !== null && warrantyDays <= 30) eqStatus = "WARRANTY_EXPIRING";
+        r.push({
+          sn,
+          product_id: item.product_id,
+          product_name: item.product_name,
+          order_id: o.id,
+          customer_id: o.customer_id,
+          customer_name: c?.company_name || o.customer_id,
+          customer_site: o.ship_to || "",
+          ship_date: shipDate,
+          warranty_start: shipDate,
+          warranty_end: wEnd,
+          warranty_days: warrantyDays,
+          status: eqStatus,
+          tickets,
+          open_tickets: openTickets.length
         });
       });
     });
@@ -2766,12 +2816,27 @@ const OrderDetail = ({
       gap: 8,
       flexWrap: "wrap"
     }
-  }, !editing && canAdvance(form.status) && /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-primary",
-    onClick: advanceStatus
-  }, /*#__PURE__*/React.createElement(ChevronRight, {
-    size: 14
-  }), " \u63A8\u9032\u81F3\u300C", ORDER_STATUSES.find(s => s.code === canAdvance(form.status))?.label, "\u300D"), !editing ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+  }, !editing && /*#__PURE__*/React.createElement("select", {
+    className: "input",
+    style: {
+      width: "auto",
+      display: "inline-block",
+      fontWeight: 600
+    },
+    value: form.status,
+    onChange: e => {
+      const u = {
+        ...form,
+        status: e.target.value
+      };
+      if (e.target.value === "SHIPPED" && !u.actual_ship_date) u.actual_ship_date = today();
+      setForm(u);
+      onSave(u);
+    }
+  }, ORDER_STATUSES.map(s => /*#__PURE__*/React.createElement("option", {
+    key: s.code,
+    value: s.code
+  }, s.label))), !editing ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-secondary",
     onClick: () => setEditing(true)
   }, /*#__PURE__*/React.createElement(Edit2, {
@@ -2839,6 +2904,23 @@ const OrderDetail = ({
       gap: "0 20px"
     }
   }, /*#__PURE__*/React.createElement(Field, {
+    label: "\u8A02\u55AE\u7DE8\u865F",
+    half: true
+  }, editing ? /*#__PURE__*/React.createElement("input", {
+    className: "input",
+    value: form.id || "",
+    onChange: e => set("id", e.target.value),
+    placeholder: "\u81EA\u52D5\u7522\u751F (\u5982 SO-20250210-001)",
+    style: {
+      fontFamily: "monospace"
+    }
+  }) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "8px 0",
+      fontFamily: "monospace",
+      fontWeight: 600
+    }
+  }, form.id)), /*#__PURE__*/React.createElement(Field, {
     label: "\u5BA2\u6236",
     required: true,
     half: true
@@ -3589,10 +3671,12 @@ const ShippingList = ({
   orders,
   customers,
   onAdd,
-  onUpdate
+  onUpdate,
+  onUpdateOrder
 }) => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [hideDelivered, setHideDelivered] = useState(false);
   const [editModal, setEditModal] = useState(null);
   const getCustName = orderId => {
     const o = orders.find(x => x.id === orderId);
@@ -3605,7 +3689,9 @@ const ShippingList = ({
     customer_name: getCustName(s.order_id),
     currency: getOrder(s.order_id)?.currency
   }));
+  const deliveredCount = enriched.filter(s => s.status === "DELIVERED").length;
   const filtered = enriched.filter(s => {
+    if (hideDelivered && s.status === "DELIVERED") return false;
     const q = search.toLowerCase();
     return (!q || s.id.toLowerCase().includes(q) || s.order_id.toLowerCase().includes(q) || s.customer_name.toLowerCase().includes(q)) && (statusFilter === "ALL" || s.status === statusFilter);
   });
@@ -3614,6 +3700,17 @@ const ShippingList = ({
       onUpdate(sh.id, sh);
     } else {
       onAdd(sh);
+    }
+    // 出貨單「已送達」→ 自動推進訂單狀態至「完成」→ SN 自動進入設備台帳
+    if (sh.status === "DELIVERED" && onUpdateOrder) {
+      const order = orders.find(o => o.id === sh.order_id);
+      if (order && order.status !== "COMPLETED") {
+        onUpdateOrder({
+          ...order,
+          status: "COMPLETED",
+          actual_ship_date: order.actual_ship_date || sh.ship_date
+        });
+      }
     }
     setEditModal(null);
   };
@@ -3713,7 +3810,31 @@ const ShippingList = ({
       fontSize: 12,
       color: S.textMuted
     }
-  }, filtered.length, " \u7B46")), /*#__PURE__*/React.createElement("div", {
+  }, filtered.length, " \u7B46"), deliveredCount > 0 && /*#__PURE__*/React.createElement("label", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      fontSize: 13,
+      color: S.textSec,
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+      userSelect: "none",
+      padding: "6px 10px",
+      borderRadius: 6,
+      border: "1px solid " + S.border,
+      background: hideDelivered ? "#F0FDF4" : "transparent"
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: hideDelivered,
+    onChange: e => setHideDelivered(e.target.checked),
+    style: {
+      accentColor: "#22C55E",
+      width: 15,
+      height: 15
+    }
+  }), hideDelivered ? "✓ " : "", "\u96B1\u85CF\u5DF2\u5165\u53F0\u5E33 (", deliveredCount, ")")), /*#__PURE__*/React.createElement("div", {
     className: "card",
     style: {
       overflow: "hidden"
@@ -3722,7 +3843,7 @@ const ShippingList = ({
     style: {
       overflowX: "auto"
     }
-  }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u51FA\u8CA8\u55AE"), /*#__PURE__*/React.createElement("th", null, "\u8A02\u55AE"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("th", null, "\u51FA\u8CA8\u65E5"), /*#__PURE__*/React.createElement("th", null, "\u627F\u904B"), /*#__PURE__*/React.createElement("th", null, "\u8FFD\u8E64\u865F"), /*#__PURE__*/React.createElement("th", null, "\u689D\u6B3E"), /*#__PURE__*/React.createElement("th", null, "\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u6587\u4EF6"), /*#__PURE__*/React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u51FA\u8CA8\u55AE"), /*#__PURE__*/React.createElement("th", null, "\u8A02\u55AE"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("th", null, "\u51FA\u8CA8\u65E5"), /*#__PURE__*/React.createElement("th", null, "\u627F\u904B"), /*#__PURE__*/React.createElement("th", null, "\u8FFD\u8E64\u865F"), /*#__PURE__*/React.createElement("th", null, "\u689D\u6B3E"), /*#__PURE__*/React.createElement("th", null, "\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u6587\u4EF6"), /*#__PURE__*/React.createElement("th", null, "\u8A2D\u5099\u53F0\u5E33"), /*#__PURE__*/React.createElement("th", {
     style: {
       width: 60
     }
@@ -3754,7 +3875,22 @@ const ShippingList = ({
     }, "\u2713 \u9F4A\u5168") : /*#__PURE__*/React.createElement(Badge, {
       bg: "#FEF3C7",
       color: "#92400E"
-    }, "\u672A\u9F4A")), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
+    }, "\u672A\u9F4A")), /*#__PURE__*/React.createElement("td", null, sh.status === "DELIVERED" ? /*#__PURE__*/React.createElement(Badge, {
+      bg: "#DCFCE7",
+      color: "#166534"
+    }, /*#__PURE__*/React.createElement(Package, {
+      size: 10
+    }), " \u5DF2\u5165\u53F0\u5E33") : sh.status === "IN_TRANSIT" || sh.status === "SHIPPED" ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: S.textMuted,
+        fontSize: 11
+      }
+    }, "\u904B\u9001\u4E2D") : /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: S.textMuted,
+        fontSize: 11
+      }
+    }, "\u2014")), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("button", {
       className: "btn btn-sm btn-secondary",
       onClick: () => setEditModal({
         ...sh
@@ -3763,7 +3899,7 @@ const ShippingList = ({
       size: 12
     }))));
   }), filtered.length === 0 && /*#__PURE__*/React.createElement(EmptyRow, {
-    cols: 10,
+    cols: 11,
     text: readyOrders.length > 0 ? "尚無出貨單，請從上方選擇訂單建立" : "無出貨紀錄"
   }))))), /*#__PURE__*/React.createElement(Modal, {
     open: !!editModal,
@@ -3802,12 +3938,25 @@ const ShipmentForm = ({
       gap: "0 20px"
     }
   }, /*#__PURE__*/React.createElement(Field, {
+    label: "\u51FA\u8CA8\u55AE\u865F",
+    half: true
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "input",
+    value: f.id || "",
+    onChange: e => s("id", e.target.value),
+    placeholder: "\u81EA\u52D5\u7522\u751F",
+    style: {
+      fontFamily: "monospace",
+      fontWeight: 600
+    }
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "\u8A02\u55AE\u7DE8\u865F",
     half: true
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       padding: "8px 0",
-      fontWeight: 600
+      fontWeight: 600,
+      fontFamily: "monospace"
     }
   }, f.order_id)), /*#__PURE__*/React.createElement(Field, {
     label: "\u51FA\u8CA8\u72C0\u614B",
@@ -3820,7 +3969,19 @@ const ShipmentForm = ({
   }, SHIP_STATUSES.map(st => /*#__PURE__*/React.createElement("option", {
     key: st.code,
     value: st.code
-  }, st.label)))), /*#__PURE__*/React.createElement(Field, {
+  }, st.label))), f.status === "DELIVERED" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 4,
+      fontSize: 12,
+      color: "#22C55E",
+      fontWeight: 600,
+      display: "flex",
+      alignItems: "center",
+      gap: 4
+    }
+  }, /*#__PURE__*/React.createElement(Package, {
+    size: 12
+  }), " \u5132\u5B58\u5F8C\u5C07\u81EA\u52D5\u63A8\u9001\u8A2D\u5099 SN \u81F3\u552E\u5F8C\u670D\u52D9\u53F0\u5E33")), /*#__PURE__*/React.createElement(Field, {
     label: "\u51FA\u8CA8\u65E5\u671F",
     required: true,
     half: true
@@ -3928,22 +4089,57 @@ const ShipmentForm = ({
 };
 
 /* ════════════════════ SERVICE LIST ════════════════════ */
-const ServiceList = ({
+const EQ_STATUS = {
+  NORMAL: {
+    label: "正常運行",
+    color: "#22C55E",
+    bg: "#DCFCE7"
+  },
+  IN_SERVICE: {
+    label: "維修中",
+    color: "#F59E0B",
+    bg: "#FEF3C7"
+  },
+  WARRANTY_EXPIRING: {
+    label: "即將過保",
+    color: "#F97316",
+    bg: "#FFF7ED"
+  },
+  OUT_OF_WARRANTY: {
+    label: "已過保",
+    color: "#9CA3AF",
+    bg: "#F3F4F6"
+  }
+};
+const EquipmentList = ({
+  equipment,
   serviceTickets,
   customers,
   orders,
-  onSelect,
-  onNew
+  onSelectEquip,
+  onSelectTicket,
+  onNewTicket
 }) => {
+  const [tab, setTab] = useState("equipment");
   const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
+  const [filterEqStatus, setFilterEqStatus] = useState("");
+  const [filterSvcStatus, setFilterSvcStatus] = useState("");
   const [filterType, setFilterType] = useState("");
-  const openCount = serviceTickets.filter(t => t.status === "OPEN").length;
-  const urgentCount = serviceTickets.filter(t => t.priority === "URGENT" && t.status !== "CLOSED" && t.status !== "RESOLVED").length;
-  const warrantyCount = serviceTickets.filter(t => t.type === "WARRANTY" && !["CLOSED", "RESOLVED"].includes(t.status)).length;
-  const totalSN = orders.reduce((s, o) => s + (o.items || []).reduce((s2, it) => s2 + (it.serial_numbers || []).filter(Boolean).length, 0), 0);
-  const filtered = serviceTickets.filter(t => {
-    if (filterStatus && t.status !== filterStatus) return false;
+  const totalEq = equipment.length;
+  const normalCount = equipment.filter(e => e.status === "NORMAL").length;
+  const inServiceCount = equipment.filter(e => e.status === "IN_SERVICE").length;
+  const expiringCount = equipment.filter(e => e.status === "WARRANTY_EXPIRING" || e.status === "OUT_OF_WARRANTY").length;
+  const openTickets = serviceTickets.filter(t => !["CLOSED", "RESOLVED"].includes(t.status)).length;
+  const filteredEq = equipment.filter(e => {
+    if (filterEqStatus && e.status !== filterEqStatus) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      return e.sn.toLowerCase().includes(q) || e.customer_name.toLowerCase().includes(q) || e.product_name.toLowerCase().includes(q) || (e.customer_site || "").toLowerCase().includes(q);
+    }
+    return true;
+  });
+  const filteredTk = serviceTickets.filter(t => {
+    if (filterSvcStatus && t.status !== filterSvcStatus) return false;
     if (filterType && t.type !== filterType) return false;
     if (search) {
       const q = search.toLowerCase();
@@ -3962,7 +4158,9 @@ const ServiceList = ({
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 20
+      marginBottom: 20,
+      flexWrap: "wrap",
+      gap: 12
     }
   }, /*#__PURE__*/React.createElement("h2", {
     style: {
@@ -3977,14 +4175,14 @@ const ServiceList = ({
     }
   }), "\u552E\u5F8C\u670D\u52D9\u7BA1\u7406"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
-    onClick: onNew
+    onClick: onNewTicket
   }, /*#__PURE__*/React.createElement(Plus, {
     size: 16
   }), " \u65B0\u589E\u670D\u52D9\u55AE")), /*#__PURE__*/React.createElement("div", {
     className: "kpi-grid",
     style: {
       display: "grid",
-      gridTemplateColumns: "repeat(4,1fr)",
+      gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
       gap: 12,
       marginBottom: 20
     }
@@ -3993,55 +4191,220 @@ const ServiceList = ({
       fontSize: 12,
       color: S.textMuted
     }
-  }, "\u5F85\u8655\u7406"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 24,
-      fontWeight: 700,
-      color: "#F59E0B"
-    }
-  }, openCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: S.textMuted
-    }
-  }, "\u7DCA\u6025\u4EF6"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 24,
-      fontWeight: 700,
-      color: S.danger
-    }
-  }, urgentCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: S.textMuted
-    }
-  }, "\u4FDD\u56FA\u7DAD\u4FEE\u4E2D"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 24,
-      fontWeight: 700,
-      color: "#22C55E"
-    }
-  }, warrantyCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 12,
-      color: S.textMuted
-    }
-  }, "\u8A2D\u5099\u7E3D\u6578 (SN)"), /*#__PURE__*/React.createElement("div", {
+  }, "\u8A2D\u5099\u7E3D\u6578"), /*#__PURE__*/React.createElement("div", {
     style: {
       fontSize: 24,
       fontWeight: 700,
       color: S.primary
     }
-  }, totalSN))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+  }, totalEq)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: S.textMuted
+    }
+  }, "\u6B63\u5E38\u904B\u884C"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#22C55E"
+    }
+  }, normalCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: S.textMuted
+    }
+  }, "\u7DAD\u4FEE\u4E2D"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#F59E0B"
+    }
+  }, inServiceCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: S.textMuted
+    }
+  }, "\u904E\u4FDD/\u5373\u5C07\u904E\u4FDD"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: S.danger
+    }
+  }, expiringCount)), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: S.textMuted
+    }
+  }, "\u5F85\u8655\u7406\u5DE5\u55AE"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#8B5CF6"
+    }
+  }, openTickets))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 0,
+      marginBottom: 16,
+      borderBottom: "2px solid " + S.border
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("equipment"),
+    style: {
+      padding: "10px 20px",
+      fontWeight: tab === "equipment" ? 700 : 400,
+      color: tab === "equipment" ? S.primary : S.textMuted,
+      borderBottom: tab === "equipment" ? "2px solid " + S.primary : "2px solid transparent",
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      fontSize: 14,
+      marginBottom: -2
+    }
+  }, /*#__PURE__*/React.createElement(Package, {
+    size: 16,
+    style: {
+      marginRight: 6,
+      verticalAlign: "middle"
+    }
+  }), "\u8A2D\u5099\u53F0\u5E33 (", totalEq, ")"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("tickets"),
+    style: {
+      padding: "10px 20px",
+      fontWeight: tab === "tickets" ? 700 : 400,
+      color: tab === "tickets" ? S.primary : S.textMuted,
+      borderBottom: tab === "tickets" ? "2px solid " + S.primary : "2px solid transparent",
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      fontSize: 14,
+      marginBottom: -2
+    }
+  }, /*#__PURE__*/React.createElement(Wrench, {
+    size: 16,
+    style: {
+      marginRight: 6,
+      verticalAlign: "middle"
+    }
+  }), "\u670D\u52D9\u5DE5\u55AE (", serviceTickets.length, ")")), tab === "equipment" && /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
     className: "filter-row",
     style: {
       display: "flex",
       gap: 10,
-      marginBottom: 16
+      marginBottom: 16,
+      flexWrap: "wrap"
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
+      minWidth: 200,
+      position: "relative"
+    }
+  }, /*#__PURE__*/React.createElement(Search, {
+    size: 16,
+    style: {
+      position: "absolute",
+      left: 10,
+      top: 10,
+      color: S.textMuted
+    }
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "input",
+    placeholder: "\u641C\u5C0B SN / \u5BA2\u6236 / \u7522\u54C1 / \u5EE0\u5340...",
+    value: search,
+    onChange: e => setSearch(e.target.value),
+    style: {
+      paddingLeft: 34
+    }
+  })), /*#__PURE__*/React.createElement("select", {
+    className: "input",
+    style: {
+      width: 150
+    },
+    value: filterEqStatus,
+    onChange: e => setFilterEqStatus(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "\u5168\u90E8\u72C0\u614B"), Object.entries(EQ_STATUS).map(([k, v]) => /*#__PURE__*/React.createElement("option", {
+    key: k,
+    value: k
+  }, v.label)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      overflowX: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u8A2D\u5099 SN"), /*#__PURE__*/React.createElement("th", null, "\u7522\u54C1\u578B\u865F"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236\u5EE0\u5340"), /*#__PURE__*/React.createElement("th", null, "\u51FA\u8CA8\u65E5\u671F"), /*#__PURE__*/React.createElement("th", null, "\u4FDD\u56FA\u5230\u671F"), /*#__PURE__*/React.createElement("th", null, "\u4FDD\u56FA\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u8A2D\u5099\u72C0\u614B"))), /*#__PURE__*/React.createElement("tbody", null, filteredEq.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    colSpan: 8,
+    style: {
+      textAlign: "center",
+      padding: 32,
+      color: S.textMuted
+    }
+  }, "\u7121\u5DF2\u51FA\u8CA8\u8A2D\u5099", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12
+    }
+  }, "\u8A02\u55AE\u51FA\u8CA8\u5F8C\uFF0C\u8A2D\u5099\u6703\u81EA\u52D5\u51FA\u73FE\u5728\u6B64"))) : filteredEq.map(eq => {
+    const es = EQ_STATUS[eq.status] || {};
+    const wOk = eq.warranty_days !== null && eq.warranty_days > 0;
+    return /*#__PURE__*/React.createElement("tr", {
+      key: eq.sn,
+      className: "clickable-row",
+      onClick: () => onSelectEquip(eq.sn)
+    }, /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+      className: "sn-tag",
+      style: {
+        fontFamily: "monospace",
+        fontWeight: 700
+      }
+    }, /*#__PURE__*/React.createElement(Hash, {
+      size: 10
+    }), eq.sn)), /*#__PURE__*/React.createElement("td", null, eq.product_id), /*#__PURE__*/React.createElement("td", {
+      style: {
+        fontWeight: 500
+      }
+    }, eq.customer_name), /*#__PURE__*/React.createElement("td", {
+      style: {
+        maxWidth: 180,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }
+    }, eq.customer_site || "—"), /*#__PURE__*/React.createElement("td", null, eq.ship_date || "—"), /*#__PURE__*/React.createElement("td", null, eq.warranty_end || "—"), /*#__PURE__*/React.createElement("td", null, eq.warranty_days !== null ? wOk ? /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: "#22C55E",
+        fontWeight: 600
+      }
+    }, "\u4FDD\u56FA\u4E2D (", eq.warranty_days, "\u5929)") : /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: S.danger,
+        fontWeight: 600
+      }
+    }, "\u5DF2\u904E\u4FDD") : "—"), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement(Badge, {
+      style: {
+        background: es.bg,
+        color: es.color
+      }
+    }, es.label), eq.open_tickets > 0 && /*#__PURE__*/React.createElement(Badge, {
+      style: {
+        background: "#FEF3C7",
+        color: "#F59E0B",
+        marginLeft: 4
+      }
+    }, eq.open_tickets, "\u55AE")));
+  }))))), tab === "tickets" && /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("div", {
+    className: "filter-row",
+    style: {
+      display: "flex",
+      gap: 10,
+      marginBottom: 16,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 200,
       position: "relative"
     }
   }, /*#__PURE__*/React.createElement(Search, {
@@ -4065,8 +4428,8 @@ const ServiceList = ({
     style: {
       width: 140
     },
-    value: filterStatus,
-    onChange: e => setFilterStatus(e.target.value)
+    value: filterSvcStatus,
+    onChange: e => setFilterSvcStatus(e.target.value)
   }, /*#__PURE__*/React.createElement("option", {
     value: ""
   }, "\u5168\u90E8\u72C0\u614B"), SERVICE_STATUSES.map(s => /*#__PURE__*/React.createElement("option", {
@@ -4086,14 +4449,14 @@ const ServiceList = ({
     value: s.code
   }, s.label)))), /*#__PURE__*/React.createElement("table", {
     className: "table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u670D\u52D9\u55AE\u865F"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("th", null, "\u8A2D\u5099 SN"), /*#__PURE__*/React.createElement("th", null, "\u985E\u578B"), /*#__PURE__*/React.createElement("th", null, "\u6A19\u984C"), /*#__PURE__*/React.createElement("th", null, "\u512A\u5148"), /*#__PURE__*/React.createElement("th", null, "\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u5EFA\u7ACB\u65E5\u671F"))), /*#__PURE__*/React.createElement("tbody", null, filtered.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u670D\u52D9\u55AE\u865F"), /*#__PURE__*/React.createElement("th", null, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("th", null, "\u8A2D\u5099 SN"), /*#__PURE__*/React.createElement("th", null, "\u985E\u578B"), /*#__PURE__*/React.createElement("th", null, "\u6A19\u984C"), /*#__PURE__*/React.createElement("th", null, "\u512A\u5148"), /*#__PURE__*/React.createElement("th", null, "\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u5EFA\u7ACB\u65E5\u671F"))), /*#__PURE__*/React.createElement("tbody", null, filteredTk.length === 0 ? /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
     colSpan: 8,
     style: {
       textAlign: "center",
       padding: 32,
       color: S.textMuted
     }
-  }, "\u7121\u670D\u52D9\u7D00\u9304")) : filtered.map(t => {
+  }, "\u7121\u670D\u52D9\u7D00\u9304")) : filteredTk.map(t => {
     const c = customers.find(x => x.id === t.customer_id);
     const ss = getSS(t.status);
     const st = getST(t.type);
@@ -4101,7 +4464,7 @@ const ServiceList = ({
     return /*#__PURE__*/React.createElement("tr", {
       key: t.id,
       className: "clickable-row",
-      onClick: () => onSelect(t.id)
+      onClick: () => onSelectTicket(t.id)
     }, /*#__PURE__*/React.createElement("td", {
       style: {
         fontFamily: "monospace",
@@ -4137,6 +4500,260 @@ const ServiceList = ({
   })))));
 };
 
+/* ════════════════════ EQUIPMENT DETAIL ════════════════════ */
+const EquipmentDetail = ({
+  sn,
+  equipment,
+  serviceTickets,
+  customers,
+  orders,
+  onBack,
+  onNewTicket,
+  onSelectTicket
+}) => {
+  const eq = equipment.find(e => e.sn === sn);
+  if (!eq) return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-secondary",
+    onClick: onBack
+  }, /*#__PURE__*/React.createElement(ArrowLeft, {
+    size: 16
+  }), " \u8FD4\u56DE"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 20,
+      color: S.textMuted
+    }
+  }, "\u627E\u4E0D\u5230\u8A2D\u5099 ", sn));
+  const es = EQ_STATUS[eq.status] || {};
+  const wOk = eq.warranty_days !== null && eq.warranty_days > 0;
+  const order = orders.find(o => o.id === eq.order_id);
+  const tickets = serviceTickets.filter(t => t.serial_number === sn).sort((a, b) => (b.created_date || "").localeCompare(a.created_date || ""));
+  const getSS = code => SERVICE_STATUSES.find(s => s.code === code) || {};
+  const getST = code => SERVICE_TYPES.find(s => s.code === code) || {};
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-secondary",
+    onClick: onBack,
+    style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement(ArrowLeft, {
+    size: 16
+  }), " \u8FD4\u56DE\u8A2D\u5099\u53F0\u5E33"), /*#__PURE__*/React.createElement(Card, {
+    style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      flexWrap: "wrap",
+      gap: 12
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 20,
+      fontWeight: 700
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sn-tag",
+    style: {
+      fontFamily: "monospace",
+      fontSize: 16
+    }
+  }, /*#__PURE__*/React.createElement(Hash, {
+    size: 14
+  }), eq.sn)), /*#__PURE__*/React.createElement(Badge, {
+    style: {
+      background: es.bg,
+      color: es.color
+    }
+  }, es.label)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 14,
+      color: S.textSec
+    }
+  }, eq.product_name)), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: () => onNewTicket(eq.sn)
+  }, /*#__PURE__*/React.createElement(Plus, {
+    size: 16
+  }), " \u65B0\u589E\u670D\u52D9\u55AE"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 16,
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontSize: 15,
+      fontWeight: 600,
+      marginBottom: 12
+    }
+  }, "\u8A2D\u5099\u8CC7\u8A0A"), /*#__PURE__*/React.createElement("table", {
+    style: {
+      width: "100%",
+      fontSize: 13
+    }
+  }, /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0",
+      width: "35%"
+    }
+  }, "\u7522\u54C1\u578B\u865F"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 500
+    }
+  }, eq.product_id, " \u2014 ", eq.product_name)), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u5BA2\u6236"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 500
+    }
+  }, eq.customer_name)), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u5BA2\u6236\u5EE0\u5340"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 500
+    }
+  }, eq.customer_site || "—")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u95DC\u806F\u8A02\u55AE"), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: "monospace",
+      fontWeight: 500
+    }
+  }, eq.order_id)))))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontSize: 15,
+      fontWeight: 600,
+      marginBottom: 12
+    }
+  }, "\u51FA\u8CA8\u8207\u4FDD\u56FA"), /*#__PURE__*/React.createElement("table", {
+    style: {
+      width: "100%",
+      fontSize: 13
+    }
+  }, /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0",
+      width: "35%"
+    }
+  }, "\u51FA\u8CA8\u65E5\u671F"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 500
+    }
+  }, eq.ship_date || "—")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u4FDD\u56FA\u8D77\u59CB"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 500
+    }
+  }, eq.warranty_start || "—")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u4FDD\u56FA\u5230\u671F"), /*#__PURE__*/React.createElement("td", {
+    style: {
+      fontWeight: 600,
+      color: wOk ? "#22C55E" : S.danger
+    }
+  }, eq.warranty_end || "—")), /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: S.textMuted,
+      padding: "6px 0"
+    }
+  }, "\u4FDD\u56FA\u72C0\u614B"), /*#__PURE__*/React.createElement("td", null, eq.warranty_days !== null ? wOk ? /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 4,
+      color: "#22C55E",
+      fontWeight: 600
+    }
+  }, /*#__PURE__*/React.createElement(Shield, {
+    size: 14
+  }), "\u4FDD\u56FA\u4E2D\uFF08\u5269\u9918 ", eq.warranty_days, " \u5929\uFF09") : /*#__PURE__*/React.createElement("span", {
+    style: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 4,
+      color: S.danger,
+      fontWeight: 600
+    }
+  }, /*#__PURE__*/React.createElement(AlertTriangle, {
+    size: 14
+  }), "\u5DF2\u904E\u4FDD\uFF08\u5DF2\u903E ", Math.abs(eq.warranty_days), " \u5929\uFF09") : /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: S.textMuted
+    }
+  }, "\u672A\u8A2D\u5B9A"))))))), /*#__PURE__*/React.createElement(Card, null, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      fontSize: 15,
+      fontWeight: 600,
+      marginBottom: 12
+    }
+  }, "\u670D\u52D9\u6B77\u53F2\u7D00\u9304 (", tickets.length, ")"), tickets.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 20,
+      textAlign: "center",
+      color: S.textMuted
+    }
+  }, "\u6B64\u8A2D\u5099\u5C1A\u7121\u670D\u52D9\u7D00\u9304") : /*#__PURE__*/React.createElement("table", {
+    className: "table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "\u670D\u52D9\u55AE\u865F"), /*#__PURE__*/React.createElement("th", null, "\u985E\u578B"), /*#__PURE__*/React.createElement("th", null, "\u6A19\u984C"), /*#__PURE__*/React.createElement("th", null, "\u72C0\u614B"), /*#__PURE__*/React.createElement("th", null, "\u5EFA\u7ACB\u65E5\u671F"), /*#__PURE__*/React.createElement("th", null, "\u89E3\u6C7A\u65E5\u671F"))), /*#__PURE__*/React.createElement("tbody", null, tickets.map(t => {
+    const ss = getSS(t.status);
+    const st = getST(t.type);
+    return /*#__PURE__*/React.createElement("tr", {
+      key: t.id,
+      className: "clickable-row",
+      onClick: () => onSelectTicket(t.id)
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        fontFamily: "monospace",
+        fontWeight: 600
+      }
+    }, t.id), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement(Badge, {
+      style: {
+        background: st.color + "22",
+        color: st.color
+      }
+    }, st.label)), /*#__PURE__*/React.createElement("td", null, t.title), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement(Badge, {
+      style: {
+        background: ss.bg,
+        color: ss.color
+      }
+    }, ss.label)), /*#__PURE__*/React.createElement("td", null, t.created_date), /*#__PURE__*/React.createElement("td", null, t.resolved_date || "—"));
+  })))));
+};
+
+/* ════════════════════ SERVICE FORM ════════════════════ */
 /* ════════════════════ SERVICE FORM ════════════════════ */
 const ServiceForm = ({
   ticket,
@@ -4152,6 +4769,7 @@ const ServiceForm = ({
     customer_id: "",
     order_id: "",
     serial_number: "",
+    customer_site: "",
     type: "INSTALL",
     priority: "NORMAL",
     status: "OPEN",
@@ -4183,6 +4801,11 @@ const ServiceForm = ({
       if (m) {
         u.customer_id = m.customer_id;
         u.order_id = m.order_id;
+        u.customer_site = m.customer_site || "";
+        if (m.ship_date) {
+          u.warranty_start = m.warranty_start || m.ship_date;
+          u.warranty_end = m.warranty_end || "";
+        }
       }
     }
     setForm(u);
@@ -4275,6 +4898,13 @@ const ServiceForm = ({
     style: {
       background: "#F9FAFB"
     }
+  })), /*#__PURE__*/React.createElement(F, {
+    label: "\u5BA2\u6236\u5EE0\u5340"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "input",
+    value: form.customer_site || "",
+    onChange: e => set("customer_site", e.target.value),
+    placeholder: "\u5BA2\u6236\u5DE5\u5EE0/\u5EE0\u5340"
   })), /*#__PURE__*/React.createElement(F, {
     label: "\u670D\u52D9\u985E\u578B"
   }, /*#__PURE__*/React.createElement("select", {
@@ -4588,9 +5218,10 @@ const GlobalSearch = ({
 
 const SEED_SERVICE_TICKETS = [{
   id: "SVC-20250205-001",
-  customer_id: "CUST-006",
+  customer_id: "C008",
   order_id: "SO-20241220-001",
   serial_number: "SA-162B-2024-045",
+  customer_site: "GIGABYTE Johor Bahru, Malaysia",
   type: "INSTALL",
   priority: "NORMAL",
   status: "RESOLVED",
@@ -4604,9 +5235,10 @@ const SEED_SERVICE_TICKETS = [{
   notes: "安裝順利，客戶已驗收"
 }, {
   id: "SVC-20250207-001",
-  customer_id: "CUST-006",
+  customer_id: "C008",
   order_id: "SO-20241220-001",
   serial_number: "SA-162B-2024-046",
+  customer_site: "GIGABYTE Johor Bahru, Malaysia",
   type: "INSTALL",
   priority: "HIGH",
   status: "IN_PROGRESS",
@@ -4620,9 +5252,10 @@ const SEED_SERVICE_TICKETS = [{
   notes: ""
 }, {
   id: "SVC-20250201-001",
-  customer_id: "CUST-005",
+  customer_id: "C002",
   order_id: "SO-20250110-001",
   serial_number: "SA-102-2025-001",
+  customer_site: "NVIDIA Santa Clara, CA",
   type: "SUPPORT",
   priority: "URGENT",
   status: "OPEN",
@@ -4705,6 +5338,7 @@ function App() {
   const addServiceTicket = t => setServiceTickets(prev => [...prev, t]);
   const updateServiceTicket = t => setServiceTickets(prev => prev.map(x => x.id === t.id ? t : x));
   const allSNs = useMemo(() => collectAllSNs(orders, customers), [orders, customers]);
+  const equipment = useMemo(() => collectEquipment(orders, customers, serviceTickets, shipments), [orders, customers, serviceTickets, shipments]);
   const saveCustomer = c => {
     if (!c.id) {
       c.id = `C${String(customers.length + 1).padStart(3, "0")}`;
@@ -4778,7 +5412,7 @@ function App() {
     "data-theme": mode
   }, /*#__PURE__*/React.createElement("style", null, css), /*#__PURE__*/React.createElement("header", {
     style: {
-      height: 60,
+      minHeight: 60,
       background: "var(--header)",
       position: "fixed",
       top: 0,
@@ -4787,7 +5421,7 @@ function App() {
       zIndex: 50,
       display: "flex",
       alignItems: "center",
-      padding: "0 20px",
+      padding: "env(safe-area-inset-top, 0) 20px 0 20px",
       gap: 12
     }
   }, /*#__PURE__*/React.createElement("button", {
@@ -4915,7 +5549,7 @@ function App() {
       borderRight: "1px solid var(--border)",
       position: "fixed",
       left: 0,
-      top: 60,
+      top: "calc(60px + env(safe-area-inset-top, 0px))",
       bottom: 0,
       zIndex: 40,
       overflow: "hidden",
@@ -4987,9 +5621,9 @@ function App() {
     className: "main-content",
     style: {
       marginLeft: sidebarOpen ? 220 : 0,
-      marginTop: 60,
+      marginTop: "calc(60px + env(safe-area-inset-top, 0px))",
       padding: 24,
-      minHeight: "calc(100vh - 60px)",
+      minHeight: "calc(100vh - 60px - env(safe-area-inset-top, 0px))",
       paddingBottom: 80,
       background: "var(--bg)",
       transition: "margin-left 0.2s"
@@ -5088,13 +5722,16 @@ function App() {
     orders: orders,
     customers: customers,
     onAdd: addShipment,
-    onUpdate: (id, data) => updateShipment(id, data)
-  }), page === "service" && !selectedId && /*#__PURE__*/React.createElement(ServiceList, {
+    onUpdate: (id, data) => updateShipment(id, data),
+    onUpdateOrder: saveOrder
+  }), page === "service" && !selectedId && /*#__PURE__*/React.createElement(EquipmentList, {
+    equipment: equipment,
     serviceTickets: serviceTickets,
     customers: customers,
     orders: orders,
-    onSelect: id => goTo("service", id),
-    onNew: () => goTo("service-new")
+    onSelectEquip: sn => goTo("equip-detail", sn),
+    onSelectTicket: id => goTo("service", id),
+    onNewTicket: () => goTo("service-new")
   }), page === "service" && selectedId && (() => {
     const t = serviceTickets.find(x => x.id === selectedId);
     return t ? /*#__PURE__*/React.createElement(ServiceForm, {
@@ -5105,8 +5742,36 @@ function App() {
       onSave: updateServiceTicket,
       onBack: () => goTo("service")
     }) : null;
-  })(), page === "service-new" && /*#__PURE__*/React.createElement(ServiceForm, {
-    ticket: null,
+  })(), page === "equip-detail" && selectedId && /*#__PURE__*/React.createElement(EquipmentDetail, {
+    sn: selectedId,
+    equipment: equipment,
+    serviceTickets: serviceTickets,
+    customers: customers,
+    orders: orders,
+    onBack: () => goTo("service"),
+    onNewTicket: sn => {
+      goTo("service-new", sn);
+    },
+    onSelectTicket: id => goTo("service", id)
+  }), page === "service-new" && /*#__PURE__*/React.createElement(ServiceForm, {
+    ticket: selectedId ? {
+      id: "",
+      customer_id: "",
+      order_id: "",
+      serial_number: selectedId,
+      customer_site: "",
+      type: "INSTALL",
+      priority: "NORMAL",
+      status: "OPEN",
+      title: "",
+      description: "",
+      assigned_to: "",
+      created_date: new Date().toISOString().slice(0, 10),
+      resolved_date: "",
+      warranty_start: "",
+      warranty_end: "",
+      notes: ""
+    } : null,
     customers: customers,
     orders: orders,
     allSNs: allSNs,
@@ -5139,12 +5804,12 @@ function App() {
     size: 20
   }), "\u6536\u6B3E"), /*#__PURE__*/React.createElement("button", {
     onClick: () => goTo("service"),
-    className: page.startsWith("service") ? "active" : ""
+    className: page.startsWith("service") || page.startsWith("equip") ? "active" : ""
   }, /*#__PURE__*/React.createElement(Wrench, {
     size: 20
-  }), "\u670D\u52D9", serviceTickets.filter(t => t.status === "OPEN").length > 0 && /*#__PURE__*/React.createElement("span", {
+  }), "\u670D\u52D9", serviceTickets.filter(t => !["CLOSED", "RESOLVED"].includes(t.status)).length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "nav-badge"
-  }, serviceTickets.filter(t => t.status === "OPEN").length))), searchOpen && /*#__PURE__*/React.createElement(GlobalSearch, {
+  }, serviceTickets.filter(t => !["CLOSED", "RESOLVED"].includes(t.status)).length))), searchOpen && /*#__PURE__*/React.createElement(GlobalSearch, {
     customers: customers,
     orders: orders,
     serviceTickets: serviceTickets,
@@ -5152,7 +5817,6 @@ function App() {
     onClose: () => setSearchOpen(false)
   }));
 }
-
 
   var root = ReactDOM.createRoot(document.getElementById("root"));
   root.render(React.createElement(ErrorBoundary, null, React.createElement(App)));
@@ -5162,7 +5826,7 @@ function App() {
   }, 200); });
 } catch(e) {
   console.error("App error:", e);
-  showError("應用程式錯誤", e);
+  showError("\u61C9\u7528\u7A0B\u5F0F\u932F\u8AA4", e);
 }
 </script>
 

@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LVI 訂單" />
+  <meta name="theme-color" content="#1a365d" />
+  <meta name="description" content="Long Victory Instruments Order Management System" />
+  <title>LVI 訂單管理系統</title>
+
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjogIkxWSSDoqILllq7nrqHnkIbns7vntbEiLCAic2hvcnRfbmFtZSI6ICJMVkkg6KiC5ZauIiwgImRlc2NyaXB0aW9uIjogIkxvbmcgVmljdG9yeSBJbnN0cnVtZW50cyBPcmRlciBNYW5hZ2VtZW50IFN5c3RlbSB2My4wIiwgInN0YXJ0X3VybCI6ICIuIiwgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxYTM2NWQiLCAidGhlbWVfY29sb3IiOiAiIzFhMzY1ZCIsICJvcmllbnRhdGlvbiI6ICJhbnkiLCAiaWNvbnMiOiBbeyJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQTFNVElnTlRFeUlqNEtJQ0E4Y21WamRDQjNhV1IwYUQwaU5URXlJaUJvWldsbmFIUTlJalV4TWlJZ2NuZzlJamd3SWlCbWFXeHNQU0lqTVdFek5qVmtJaTgrQ2lBZ1BIUmxlSFFnZUQwaU1qVTJJaUI1UFNJeU1EQWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpSUdacGJHdzlJaU5tWm1ZaUlHWnZiblF0YzJsNlpUMGlNVEl3SWlCbWIyNTBMWGRsYVdkb2REMGlOekF3SWlCbWIyNTBMV1poYldsc2VUMGljM2x6ZEdWdExYVnBJajVNVmtrOEwzUmxlSFErQ2lBZ1BIUmxlSFFnZUQwaU1qVTJJaUI1UFNJeU9UQWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpSUdacGJHdzlJaU0yTUVFMVJrRWlJR1p2Ym5RdGMybDZaVDBpTkRnaUlHWnZiblF0Wm1GdGFXeDVQU0p6ZVhOMFpXMHRkV2tpUHVpb2d1V1dydWV1b2VlUWhqd3ZkR1Y0ZEQ0S0lDQThkR1Y0ZENCNFBTSXlOVFlpSUhrOUlqTTRNQ0lnZEdWNGRDMWhibU5vYjNJOUltMXBaR1JzWlNJZ1ptbHNiRDBpSXprMFFUTkNPQ0lnWm05dWRDMXphWHBsUFNJek5pSWdabTl1ZEMxbVlXMXBiSGs5SW5ONWMzUmxiUzExYVNJK1QzSmtaWElnVTNsemRHVnRQQzkwWlhoMFBnbzhMM04yWno0PSIsICJzaXplcyI6ICJhbnkiLCAidHlwZSI6ICJpbWFnZS9zdmcreG1sIiwgInB1cnBvc2UiOiAiYW55In1dfQ==" />
+  <link rel="apple-touch-icon" href="data:image/png;base64,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" />
+  <link rel="icon" href="data:image/png;base64,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" />
+
+  <style>
+    #splash { position:fixed; inset:0; background:#1a365d; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; transition:opacity 0.3s; }
+    #splash.hide { opacity:0; pointer-events:none; }
+    #splash h1 { color:#fff; font-size:32px; font-weight:700; font-family:system-ui; }
+    #splash p { color:#60A5FA; font-size:16px; margin-top:8px; font-family:system-ui; }
+    #splash .loader { width:40px; height:40px; border:3px solid rgba(255,255,255,0.2); border-top-color:#fff; border-radius:50%; animation:spin 0.8s linear infinite; margin-top:24px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide-react/0.263.1/lucide-react.min.js"></script>
+</head>
+<body>
+  <div id="splash">
+    <h1>LVI</h1>
+    <p>訂單管理系統 v3.0</p>
+    <div class="loader"></div>
+  </div>
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+const { useState, useMemo, useEffect, useCallback, createContext } = React;
+const { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } = Recharts;
+
+// Icon fallback if lucide-react CDN not available
+const _lr = window.lucideReact || {};
+const _icon = (name) => _lr[name] || (({size=24,color="currentColor",...p}) => 
+  React.createElement("span", {style:{display:"inline-flex",width:size,height:size,alignItems:"center",justifyContent:"center",fontSize:size*0.6},...p}, "⬡"));
+const LayoutDashboard = _lr.LayoutDashboard || _icon("LayoutDashboard");
+const Users = _lr.Users || _icon("Users");
+const ClipboardList = _lr.ClipboardList || _icon("ClipboardList");
+const Plus = _lr.Plus || _icon("Plus");
+const Search = _lr.Search || _icon("Search");
+const ChevronRight = _lr.ChevronRight || _icon("ChevronRight");
+const Edit2 = _lr.Edit2 || _icon("Edit2");
+const Trash2 = _lr.Trash2 || _icon("Trash2");
+const Eye = _lr.Eye || _icon("Eye");
+const X = _lr.X || _icon("X");
+const Check = _lr.Check || _icon("Check");
+const AlertTriangle = _lr.AlertTriangle || _icon("AlertTriangle");
+const Clock = _lr.Clock || _icon("Clock");
+const Star = _lr.Star || _icon("Star");
+const Phone = _lr.Phone || _icon("Phone");
+const Mail = _lr.Mail || _icon("Mail");
+const Globe = _lr.Globe || _icon("Globe");
+const ArrowLeft = _lr.ArrowLeft || _icon("ArrowLeft");
+const UserPlus = _lr.UserPlus || _icon("UserPlus");
+const Menu = _lr.Menu || _icon("Menu");
+const Bell = _lr.Bell || _icon("Bell");
+const Package = _lr.Package || _icon("Package");
+const DollarSign = _lr.DollarSign || _icon("DollarSign");
+const Truck = _lr.Truck || _icon("Truck");
+const FileCheck = _lr.FileCheck || _icon("FileCheck");
+const CheckSquare = _lr.CheckSquare || _icon("CheckSquare");
+const Square = _lr.Square || _icon("Square");
+const CreditCard = _lr.CreditCard || _icon("CreditCard");
+const ArrowUpRight = _lr.ArrowUpRight || _icon("ArrowUpRight");
+const Filter = _lr.Filter || _icon("Filter");
+const Wrench = _lr.Wrench || _icon("Wrench");
+const Shield = _lr.Shield || _icon("Shield");
+const Hash = _lr.Hash || _icon("Hash");
+const Save = _lr.Save || _icon("Save");
+const Moon = _lr.Moon || _icon("Moon");
+const Sun = _lr.Sun || _icon("Sun");
+const Printer = _lr.Printer || _icon("Printer");
+const RotateCcw = _lr.RotateCcw || _icon("RotateCcw");
+/* ═══ CONSTANTS ═══ */
+const REGIONS = { TW: "台灣", US: "美國", MX: "墨西哥", VN: "越南", MY: "馬來西亞", HU: "匈牙利", CZ: "捷克" };
+const CUST_TYPES = { VIP: { label: "VIP", bg: "#FFF8E1", color: "#B45309" }, NORMAL: { label: "一般", bg: "#F3F4F6", color: "#374151" }, POTENTIAL: { label: "潛在", bg: "#DBEAFE", color: "#1E40AF" } };
+
+/* ════════ localStorage Hook ════════ */
+const STORAGE_KEY = "lvi_order_system_v3";
+const useLocalState = (key, init) => {
+  const [val, setVal] = useState(() => {
+    try { const s = localStorage.getItem(STORAGE_KEY); if (s) { const d = JSON.parse(s); if (d[key] !== undefined) return d[key]; } } catch(e) {}
+    return typeof init === "function" ? init() : init;
+  });
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(STORAGE_KEY);
+      const d = s ? JSON.parse(s) : {};
+      d[key] = val;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+    } catch(e) {}
+  }, [key, val]);
+  return [val, setVal];
+};
+
+/* ════════ Theme Context ════════ */
+const ThemeCtx = createContext("light");
+const useTheme = () => {
+  const [mode, setMode] = useState(() => {
+    try { return localStorage.getItem("lvi_theme") || "light"; } catch(e) { return "light"; }
+  });
+  const toggle = useCallback(() => {
+    const next = mode === "light" ? "dark" : "light";
+    setMode(next);
+    try { localStorage.setItem("lvi_theme", next); } catch(e) {}
+  }, [mode]);
+  S = THEMES[mode] || THEMES.light;
+  return { mode, toggle, S: THEMES[mode] || THEMES.light };
+};
+
+const clearAllData = () => { localStorage.removeItem(STORAGE_KEY); window.location.reload(); };
+
+
+const ORDER_STATUSES = [
+  { code: "PENDING", label: "待確認", color: "#9CA3AF", bg: "#F3F4F6" },
+  { code: "CONFIRMED", label: "已確認", color: "#3B82F6", bg: "#DBEAFE" },
+  { code: "IN_PRODUCTION", label: "生產中", color: "#8B5CF6", bg: "#EDE9FE" },
+  { code: "READY_TO_SHIP", label: "待出貨", color: "#06B6D4", bg: "#CFFAFE" },
+  { code: "SHIPPED", label: "已出貨", color: "#22C55E", bg: "#DCFCE7" },
+  { code: "COMPLETED", label: "完成", color: "#166534", bg: "#BBF7D0" },
+  { code: "CANCELLED", label: "取消", color: "#EF4444", bg: "#FEE2E2" },
+];
+const PAY_STATUSES = [
+  { code: "PENDING", label: "待收款", color: "#9CA3AF", bg: "#F3F4F6" },
+  { code: "PARTIAL", label: "部分收款", color: "#EAB308", bg: "#FEF3C7" },
+  { code: "RECEIVED", label: "已收款", color: "#22C55E", bg: "#DCFCE7" },
+  { code: "OVERDUE", label: "逾期", color: "#EF4444", bg: "#FEE2E2" },
+];
+const SHIP_STATUSES = [
+  { code: "PREPARING", label: "備貨中", color: "#9CA3AF", bg: "#F3F4F6" },
+  { code: "PACKED", label: "已包裝", color: "#3B82F6", bg: "#DBEAFE" },
+  { code: "SHIPPED", label: "已出貨", color: "#8B5CF6", bg: "#EDE9FE" },
+  { code: "IN_TRANSIT", label: "運送中", color: "#06B6D4", bg: "#CFFAFE" },
+  { code: "DELIVERED", label: "已送達", color: "#22C55E", bg: "#DCFCE7" },
+];
+const DELIVERY_TERMS = [
+  { code: "FOB_TW", label: "FOB Taiwan", group: "國際", desc: "離岸價，裝船後風險移轉買方" },
+  { code: "CIF", label: "CIF", group: "國際", desc: "含運費保險費，到目的港" },
+  { code: "CFR", label: "CFR (C&F)", group: "國際", desc: "含運費，不含保險" },
+  { code: "FCA", label: "FCA", group: "國際", desc: "貨交承運人（指定地點）" },
+  { code: "CPT", label: "CPT", group: "國際", desc: "運費付訖至目的地" },
+  { code: "CIP", label: "CIP", group: "國際", desc: "運費保險付訖至目的地" },
+  { code: "DAP", label: "DAP", group: "國際", desc: "目的地交貨，未完稅" },
+  { code: "DDP", label: "DDP", group: "國際", desc: "完稅後交貨，賣方負全責" },
+  { code: "EXW", label: "EXW 工廠交貨", group: "特殊", desc: "買方自廠取貨" },
+  { code: "DAP_TW", label: "含稅含運", group: "國內", desc: "國內訂單，送達指定地點" },
+];
+
+const SERVICE_STATUSES = [
+  { code: "OPEN", label: "待處理", color: "#9CA3AF", bg: "#F3F4F6" },
+  { code: "ASSIGNED", label: "已派工", color: "#3B82F6", bg: "#DBEAFE" },
+  { code: "IN_PROGRESS", label: "處理中", color: "#8B5CF6", bg: "#EDE9FE" },
+  { code: "PENDING_PARTS", label: "等料中", color: "#EAB308", bg: "#FEF3C7" },
+  { code: "RESOLVED", label: "已解決", color: "#22C55E", bg: "#DCFCE7" },
+  { code: "CLOSED", label: "結案", color: "#166534", bg: "#BBF7D0" },
+];
+const SERVICE_TYPES = [
+  { code: "INSTALL", label: "安裝調試", color: "#3B82F6" },
+  { code: "WARRANTY", label: "保固維修", color: "#22C55E" },
+  { code: "PAID", label: "付費維修", color: "#8B5CF6" },
+  { code: "MAINTENANCE", label: "定期保養", color: "#06B6D4" },
+  { code: "SUPPORT", label: "技術支援", color: "#EAB308" },
+];
+const SERVICE_PRIORITIES = [
+  { code: "URGENT", label: "緊急", color: "#EF4444", bg: "#FEE2E2" },
+  { code: "HIGH", label: "高", color: "#F97316", bg: "#FFF7ED" },
+  { code: "NORMAL", label: "一般", color: "#3B82F6", bg: "#DBEAFE" },
+  { code: "LOW", label: "低", color: "#9CA3AF", bg: "#F3F4F6" },
+];
+
+const SHIP_DOCS = [
+  { key: "invoice", label: "Commercial Invoice" },
+  { key: "packing", label: "Packing List" },
+  { key: "cert", label: "認證文件 (UL/CE)" },
+  { key: "manual", label: "操作手冊" },
+  { key: "warranty", label: "保固卡" },
+];
+const CURRENCIES = ["TWD", "USD"];
+const PRODUCTS = [
+  { id: "SA-162B", name: "SA-162B TIM Settling System" },
+  { id: "SA-710", name: "SA-710 Leak Test System" },
+  { id: "SA-710L", name: "SA-710L Rack Leak Test" },
+  { id: "SA-710-10MP", name: "SA-710-10MP Multi-Channel" },
+  { id: "SA-720", name: "SA-720 Pipe Cleaning" },
+  { id: "SA-720L", name: "SA-720L Online Particle Counter" },
+  { id: "SA-750", name: "SA-750 Vacuum Fill (L10)" },
+  { id: "SA-751", name: "SA-751 Vacuum Fill (L11)" },
+  { id: "SA-760", name: "SA-760 Drain & N₂ Fill" },
+  { id: "SA-761", name: "SA-761 Dual Drain & N₂" },
+  { id: "SA-163M", name: "SA-163M Mini TIM Settling" },
+  { id: "SA-100", name: "SA-100 Cold Plate Tester" },
+  { id: "SA-102", name: "SA-102 Two-Phase Tester" },
+];
+
+const today = () => new Date().toISOString().slice(0, 10);
+const fmt = (n, c = "TWD") => (c === "USD" ? "$" : "NT$") + Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+const daysDiff = (d) => { if (!d) return 999; const t = new Date(d); const n = new Date(); n.setHours(0,0,0,0); t.setHours(0,0,0,0); return Math.ceil((t - n) / 86400000); };
+const genId = (prefix) => `${prefix}-${new Date().toISOString().slice(0,10).replace(/-/g,"")}-${String(Math.floor(Math.random()*999)+1).padStart(3,"0")}`;
+
+/* ═══ SEED DATA ═══ */
+const SEED_CUSTOMERS = [
+  { id: "C001", company_name: "Amazon Data Services", company_name_en: "Amazon Data Services", customer_type: "VIP", region: "US", industry: "雲端服務", phone: "+1-206-266-1000", website: "aws.amazon.com", notes: "Jabil 代工", contacts: [{ id: "CT001", name: "John Smith", title: "Procurement Manager", department: "Supply Chain", role: "採購", email: "john.smith@amazon.com", phone: "+1-206-266-1001", is_primary: true }] },
+  { id: "C002", company_name: "NVIDIA", company_name_en: "NVIDIA Corporation", customer_type: "VIP", region: "US", industry: "半導體", phone: "+1-408-486-2000", website: "nvidia.com", notes: "GPU 液冷模組規範制定者", contacts: [{ id: "CT002", name: "Lisa Chen", title: "Senior Engineer", department: "Thermal Engineering", role: "工程", email: "lchen@nvidia.com", phone: "+1-408-486-2001", is_primary: true }] },
+  { id: "C003", company_name: "鴻海精密 (Ingrasys)", company_name_en: "Foxconn / Ingrasys", customer_type: "VIP", region: "TW", industry: "ODM 代工", phone: "03-3612121", website: "ingrasys.com", notes: "TW-TAO, US-SJ, US-SV, US-HOU 多據點", contacts: [{ id: "CT003", name: "王建民", title: "專案經理", department: "液冷事業處", role: "PM", email: "cm.wang@ingrasys.com", phone: "03-3612122", is_primary: true }, { id: "CT004", name: "Chen Wei", title: "Senior Buyer", department: "Procurement", role: "採購", email: "wei.chen@ingrasys.com", phone: "03-3612123", is_primary: false }] },
+  { id: "C004", company_name: "緯創資通", company_name_en: "Wistron Corporation", customer_type: "VIP", region: "TW", industry: "ODM 代工", phone: "02-66128888", website: "wistron.com", notes: "TW-HSZ, US-Dallas, US-SJ, MX-JRZ", contacts: [{ id: "CT005", name: "林小華", title: "採購主管", department: "採購部", role: "採購", email: "sherry.lin@wistron.com", phone: "02-66128889", is_primary: true }] },
+  { id: "C005", company_name: "緯穎科技", company_name_en: "Wiwynn Corporation", customer_type: "VIP", region: "TW", industry: "伺服器", phone: "02-66128000", website: "wiwynn.com", notes: "TW-TNN, MY-JB, MX-JRZ", contacts: [{ id: "CT006", name: "張大明", title: "工程部經理", department: "工程部", role: "工程", email: "dm.chang@wiwynn.com", phone: "02-66128001", is_primary: true }] },
+  { id: "C006", company_name: "聯想", company_name_en: "Lenovo", customer_type: "VIP", region: "US", industry: "伺服器/PC", phone: "+1-919-257-6000", website: "lenovo.com", notes: "US-NC", contacts: [{ id: "CT007", name: "Mike Johnson", title: "Supply Chain Director", department: "Operations", role: "主管", email: "mjohnson@lenovo.com", phone: "+1-919-257-6001", is_primary: true }] },
+  { id: "C007", company_name: "華碩", company_name_en: "ASUS", customer_type: "VIP", region: "TW", industry: "伺服器/主機板", phone: "02-28943447", website: "asus.com", notes: "InWin 代工, TW-TAO", contacts: [{ id: "CT008", name: "陳志豪", title: "資深工程師", department: "伺服器事業部", role: "工程", email: "zhihao_chen@asus.com", phone: "02-28943448", is_primary: true }] },
+  { id: "C008", company_name: "技嘉科技", company_name_en: "GIGABYTE", customer_type: "VIP", region: "TW", industry: "伺服器/主機板", phone: "02-89124888", website: "gigabyte.com", notes: "TW-TAO, MY-JB, US-Dallas", contacts: [{ id: "CT009", name: "黃美玲", title: "採購專員", department: "採購部", role: "採購", email: "ml.huang@gigabyte.com", phone: "02-89124889", is_primary: true }] },
+  { id: "C009", company_name: "仁寶電腦", company_name_en: "Compal Electronics", customer_type: "VIP", region: "TW", industry: "ODM 代工", phone: "02-87978588", website: "compal.com", notes: "", contacts: [{ id: "CT010", name: "劉大維", title: "專案經理", department: "新事業部", role: "PM", email: "david.liu@compal.com", phone: "02-87978589", is_primary: true }] },
+];
+
+const SEED_ORDERS = [
+  { id: "SO-20250120-001", customer_id: "C003", customer_po: "FXN-PO-2025-0088", order_date: "2025-01-20", status: "IN_PRODUCTION", currency: "TWD", items: [{ product_id: "SA-162B", product_name: "SA-162B TIM Settling System", qty: 3, unit_price: 1850000, amount: 5550000, serial_numbers: ["SA-162B-2025-012","SA-162B-2025-013","SA-162B-2025-014"] }], subtotal: 5550000, tax: 277500, total: 5827500, payment_terms: "T/T 50%+50%", delivery_terms: "DAP", expected_ship_date: "2025-03-28", actual_ship_date: "", ship_to: "桃園市楊梅區 FII 廠區", is_urgent: false, notes: "FII 越南廠" },
+  { id: "SO-20250201-001", customer_id: "C004", customer_po: "WIS-2025-LQ-012", order_date: "2025-02-01", status: "CONFIRMED", currency: "USD", items: [{ product_id: "SA-751", product_name: "SA-751 Vacuum Fill (L11)", qty: 2, unit_price: 85000, amount: 170000, serial_numbers: ["SA-751-2025-005","SA-751-2025-006"] }], subtotal: 170000, tax: 0, total: 170000, payment_terms: "T/T 50%+50%", delivery_terms: "FOB_TW", expected_ship_date: "2025-04-15", actual_ship_date: "", ship_to: "Wistron Juarez, Mexico", is_urgent: false, notes: "MX-JRZ 工廠" },
+  { id: "SO-20250205-001", customer_id: "C001", customer_po: "AMZN-CVG-2025-033", order_date: "2025-02-05", status: "PENDING", currency: "USD", items: [{ product_id: "SA-710-10MP", product_name: "SA-710-10MP Multi-Channel Leak Test", qty: 1, unit_price: 120000, amount: 120000, serial_numbers: [] }, { product_id: "SA-750", product_name: "SA-750 Vacuum Fill (L10)", qty: 2, unit_price: 55000, amount: 110000, serial_numbers: [] }], subtotal: 230000, tax: 0, total: 230000, payment_terms: "T/T 50%+50%", delivery_terms: "CIF", expected_ship_date: "2025-04-20", actual_ship_date: "", ship_to: "Amazon CVG, Cincinnati OH", is_urgent: true, notes: "Amazon CVG 擴產急單" },
+  { id: "SO-20250115-001", customer_id: "C005", customer_po: "WW-2025-0056", order_date: "2025-01-15", status: "READY_TO_SHIP", currency: "TWD", items: [{ product_id: "SA-710", product_name: "SA-710 Leak Test System", qty: 4, unit_price: 980000, amount: 3920000, serial_numbers: ["SA-710-2025-008","SA-710-2025-009","SA-710-2025-010","SA-710-2025-011"] }], subtotal: 3920000, tax: 196000, total: 4116000, payment_terms: "T/T 50%+50%", delivery_terms: "FOB_TW", expected_ship_date: "2025-02-28", actual_ship_date: "", ship_to: "Wiwynn Johor Bahru, Malaysia", is_urgent: false, notes: "MY-JB 馬來西亞廠" },
+  { id: "SO-20250110-001", customer_id: "C002", customer_po: "NV-THERMAL-2025-009", order_date: "2025-01-10", status: "SHIPPED", currency: "USD", items: [{ product_id: "SA-102", product_name: "SA-102 Two-Phase Cold Plate Tester", qty: 1, unit_price: 180000, amount: 180000, serial_numbers: ["SA-102-2025-001"] }], subtotal: 180000, tax: 0, total: 180000, payment_terms: "T/T 50%+50%", delivery_terms: "FOB_TW", expected_ship_date: "2025-02-15", actual_ship_date: "2025-02-12", ship_to: "NVIDIA Santa Clara, CA", is_urgent: false, notes: "NVIDIA 研發測試用" },
+  { id: "SO-20241220-001", customer_id: "C008", customer_po: "GB-2024-LQ-088", order_date: "2024-12-20", status: "COMPLETED", currency: "TWD", items: [{ product_id: "SA-162B", product_name: "SA-162B TIM Settling System", qty: 2, unit_price: 1850000, amount: 3700000, serial_numbers: ["SA-162B-2024-045","SA-162B-2024-046"] }], subtotal: 3700000, tax: 185000, total: 3885000, payment_terms: "T/T 50%+50%", delivery_terms: "FOB_TW", expected_ship_date: "2025-02-10", actual_ship_date: "2025-02-08", ship_to: "GIGABYTE Johor Bahru, Malaysia", is_urgent: false, notes: "MY-JB 產線" },
+];
+
+const SEED_PAYMENTS = [
+  { id: "PAY-001", order_id: "SO-20250120-001", type: "訂金", amount: 2913750, due_date: "2025-01-27", status: "RECEIVED", received_date: "2025-01-25", received_amount: 2913750, bank_ref: "CTBC-20250125-8821", notes: "" },
+  { id: "PAY-002", order_id: "SO-20250120-001", type: "尾款", amount: 2913750, due_date: "2025-03-25", status: "PENDING", received_date: "", received_amount: 0, bank_ref: "", notes: "" },
+  { id: "PAY-003", order_id: "SO-20250201-001", type: "訂金", amount: 85000, due_date: "2025-02-08", status: "RECEIVED", received_date: "2025-02-07", received_amount: 85000, bank_ref: "WIRE-20250207-USD", notes: "" },
+  { id: "PAY-004", order_id: "SO-20250201-001", type: "尾款", amount: 85000, due_date: "2025-04-12", status: "PENDING", received_date: "", received_amount: 0, bank_ref: "", notes: "" },
+  { id: "PAY-005", order_id: "SO-20250205-001", type: "訂金", amount: 115000, due_date: "2025-02-12", status: "OVERDUE", received_date: "", received_amount: 0, bank_ref: "", notes: "已催款兩次" },
+  { id: "PAY-006", order_id: "SO-20250115-001", type: "訂金", amount: 2058000, due_date: "2025-01-22", status: "RECEIVED", received_date: "2025-01-21", received_amount: 2058000, bank_ref: "CTBC-20250121-6634", notes: "" },
+  { id: "PAY-007", order_id: "SO-20250115-001", type: "尾款", amount: 2058000, due_date: "2025-02-25", status: "OVERDUE", received_date: "", received_amount: 0, bank_ref: "", notes: "出貨前需收齊" },
+  { id: "PAY-008", order_id: "SO-20250110-001", type: "訂金", amount: 90000, due_date: "2025-01-17", status: "RECEIVED", received_date: "2025-01-16", received_amount: 90000, bank_ref: "WIRE-20250116-NV", notes: "" },
+  { id: "PAY-009", order_id: "SO-20250110-001", type: "尾款", amount: 90000, due_date: "2025-02-12", status: "RECEIVED", received_date: "2025-02-11", received_amount: 90000, bank_ref: "WIRE-20250211-NV", notes: "" },
+  { id: "PAY-010", order_id: "SO-20241220-001", type: "訂金", amount: 1942500, due_date: "2024-12-27", status: "RECEIVED", received_date: "2024-12-26", received_amount: 1942500, bank_ref: "CTBC-20241226-9012", notes: "" },
+  { id: "PAY-011", order_id: "SO-20241220-001", type: "尾款", amount: 1942500, due_date: "2025-02-07", status: "RECEIVED", received_date: "2025-02-06", received_amount: 1942500, bank_ref: "CTBC-20250206-9013", notes: "" },
+];
+
+const SEED_SHIPMENTS = [
+  { id: "SHP-20250212-001", order_id: "SO-20250110-001", ship_date: "2025-02-12", carrier: "FedEx International", tracking_no: "FX-7729001884", delivery_terms: "FOB_TW", ship_to: "NVIDIA Santa Clara, CA", status: "IN_TRANSIT", documents: { invoice: true, packing: true, cert: true, manual: true, warranty: true }, notes: "2 pallets, 250kg" },
+  { id: "SHP-20250208-001", order_id: "SO-20241220-001", ship_date: "2025-02-08", carrier: "Evergreen Marine", tracking_no: "EGLV-223456789", delivery_terms: "FOB_TW", ship_to: "GIGABYTE Johor Bahru, Malaysia", status: "DELIVERED", documents: { invoice: true, packing: true, cert: true, manual: true, warranty: true }, notes: "海運 20ft container" },
+];
+
+/* ═══ STYLES ═══ */
+const FONT = "'Microsoft JhengHei','PingFang TC','Noto Sans TC',-apple-system,sans-serif";
+const THEMES = {
+  light: { font: FONT, primary: "#1a365d", secondary: "#0077B6", danger: "#DC2626", success: "#22C55E", warning: "#EAB308", gold: "#FFB703", bg: "#F8FAFC", cardBg: "#fff", border: "#E2E8F0", text: "#1F2937", textSec: "#6B7280", textMuted: "#9CA3AF", headerBg: "#1E293B", sidebarBg: "#fff", inputBg: "#fff", hoverBg: "#F1F5F9", tableBg: "#F8FAFC", mode: "light" },
+  dark:  { font: FONT, primary: "#60A5FA", secondary: "#38BDF8", danger: "#F87171", success: "#4ADE80", warning: "#FBBF24", gold: "#FCD34D", bg: "#0F172A", cardBg: "#1E293B", border: "#334155", text: "#F1F5F9", textSec: "#94A3B8", textMuted: "#64748B", headerBg: "#020617", sidebarBg: "#1E293B", inputBg: "#334155", hoverBg: "#334155", tableBg: "#1E293B", mode: "dark" },
+};
+let S = THEMES.light;
+
+const css = `
+  :root { --bg:#F8FAFC; --card:#fff; --border:#E2E8F0; --text:#1F2937; --textSec:#6B7280; --input:#fff; --hover:#F1F5F9; --header:#1E293B; --sidebar:#fff; --tableBg:#F8FAFC; }
+  [data-theme="dark"] { --bg:#0F172A; --card:#1E293B; --border:#334155; --text:#F1F5F9; --textSec:#94A3B8; --input:#334155; --hover:#334155; --header:#020617; --sidebar:#1E293B; --tableBg:#1E293B; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: ${S.font}; background: var(--bg); color: var(--text); font-size:14px; }
+  input,select,textarea { font-family: inherit; font-size:14px; }
+  button { font-family: inherit; cursor: pointer; border:none; }
+  ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-thumb { background:#CBD5E1; border-radius:3px; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+  .fade-in { animation: fadeIn 0.2s ease; }
+  /* ═══ RWD ═══ */
+  @media (max-width: 768px) {
+    .desktop-only { display: none !important; }
+    .mobile-only { display: flex !important; }
+    .card { padding: 14px !important; }
+    .table { font-size: 13px; }
+    .table th, .table td { padding: 8px 6px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr !important; }
+    .form-grid { grid-template-columns: 1fr !important; }
+    .form-grid-2 { grid-template-columns: 1fr !important; }
+    .header-title { font-size: 16px !important; }
+    .sidebar-desktop { display: none !important; }
+    .main-content { margin-left: 0 !important; }
+    .bottom-nav { display: flex !important; }
+    .filter-row { flex-direction: column !important; }
+    .filter-row > * { width: 100% !important; }
+    .action-buttons { flex-wrap: wrap; }
+    .action-buttons .btn { flex: 1; min-width: 100px; justify-content: center; }
+    h1 { font-size: 20px !important; }
+    h2 { font-size: 18px !important; }
+    .status-flow { display: none !important; }
+  }
+  @media (min-width: 769px) {
+    .mobile-only { display: none !important; }
+    .bottom-nav { display: none !important; }
+  }
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 60px;
+    background: var(--card); border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: center;
+    z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav button {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: none; border: none; font-size: 10px; padding: 6px 12px;
+    color: var(--textSec); cursor: pointer; position: relative; border-radius: 8px;
+  }
+  .bottom-nav button.active { color: #2563EB; font-weight: 600; }
+  [data-theme="dark"] .bottom-nav button.active { color: #60A5FA; }
+  .bottom-nav .nav-badge {
+    position: absolute; top: 2px; right: 4px; width: 16px; height: 16px;
+    border-radius: 8px; background: #EF4444; color: #fff; font-size: 9px;
+    font-weight: 700; display: flex; align-items: center; justify-content: center;
+  }
+  /* Print styles */
+  @media print {
+    .sidebar-desktop, .bottom-nav, header, .no-print { display: none !important; }
+    .main-content { margin: 0 !important; padding: 10px !important; }
+    .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
+    body { background: #fff !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  [data-theme="dark"] .card { border-color: var(--border); }
+  [data-theme="dark"] .input, [data-theme="dark"] .textarea { border-color: var(--border); }
+  [data-theme="dark"] .btn { border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .btn:hover { background: var(--hover); }
+  [data-theme="dark"] .clickable-row:hover { background: var(--hover) !important; }
+  [data-theme="dark"] select option { background: var(--card); color: var(--text); }
+  [data-theme="dark"] table { color: var(--text); }
+  [data-theme="dark"] th { border-color: var(--border) !important; }
+  [data-theme="dark"] td { border-color: var(--border) !important; }
+  [data-theme="dark"] tr:hover { background: var(--hover); }
+
+
+  .sn-tag { display:inline-flex; align-items:center; gap:3px; padding:2px 8px; border-radius:4px; font-size:11px; font-family:monospace; background:#F0F4FF; color:#1E40AF; border:1px solid #DBEAFE; margin:2px; }
+  .badge { padding:2px 8px; border-radius:4px; font-size:12px; font-weight:500; display:inline-block; white-space:nowrap; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; transition:all 0.15s; }
+  .btn:hover { filter:brightness(1.08); } .btn:active { filter:brightness(0.95); }
+  .btn-primary { background:${S.primary}; color:#fff; } .btn-secondary { background:#fff; color:${S.primary}; border:1px solid var(--border); }
+  .btn-danger { background:${S.danger}; color:#fff; } .btn-success { background:${S.success}; color:#fff; }
+  .btn-sm { padding:5px 10px; font-size:12px; }
+  .input { height:40px; padding:8px 12px; border:1px solid var(--border); background:var(--input); color:var(--text); border-radius:6px; width:100%; outline:none; transition:border 0.15s; background:#fff; }
+  .input:focus { border-color:${S.secondary}; } .input:hover { border-color:#CBD5E1; }
+  .textarea { padding:8px 12px; border:1px solid var(--border); border-radius:6px; width:100%; outline:none; min-height:72px; resize:vertical; background:var(--input); color:var(--text); }
+  .textarea:focus { border-color:${S.secondary}; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+  table { width:100%; border-collapse:collapse; } th { background:${S.bg}; font-weight:600; text-align:left; padding:10px 14px; font-size:12px; color:${S.textSec}; text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid ${S.border}; }
+  td { padding:10px 14px; border-bottom:1px solid #F1F5F9; font-size:13px; vertical-align:middle; }
+  tr:hover td { background:#FAFBFD; }
+  .label { font-size:12px; font-weight:600; color:${S.textSec}; margin-bottom:4px; display:block; }
+  .required::after { content:" *"; color:${S.danger}; }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:100; }
+  .modal { background:#fff; border-radius:12px; padding:24px; max-width:640px; width:92%; max-height:85vh; overflow-y:auto; box-shadow:0 20px 25px rgba(0,0,0,.15); }
+  .tab-active { background:#fff!important; color:${S.primary}!important; font-weight:600!important; box-shadow:0 1px 3px rgba(0,0,0,.1)!important; }
+`;
+
+/* ═══ COMMON COMPONENTS ═══ */
+const Badge = ({ children, bg, color }) => <span className="badge" style={{ background: bg, color }}>{children}</span>;
+const Card = ({ children, style = {} }) => <div className="card" style={{ padding: 18, ...style }}>{children}</div>;
+const StatusBadge = ({ code, list = ORDER_STATUSES }) => { const s = list.find(x => x.code === code); return s ? <Badge bg={s.bg} color={s.color}>{s.label}</Badge> : null; };
+const TypeBadge = ({ type }) => { const t = CUST_TYPES[type]; return t ? <Badge bg={t.bg} color={t.color}>{t.label}</Badge> : null; };
+const DeliveryBadge = ({ date, status }) => {
+  if (!date || ["COMPLETED","CANCELLED","SHIPPED"].includes(status)) return null;
+  const d = daysDiff(date);
+  if (d < 0) return <Badge bg="#FEE2E2" color="#991B1B">逾期 {Math.abs(d)} 天</Badge>;
+  if (d <= 3) return <Badge bg="#FFF7ED" color="#C2410C">剩 {d} 天</Badge>;
+  if (d <= 7) return <Badge bg="#FEF3C7" color="#92400E">剩 {d} 天</Badge>;
+  return <span style={{ fontSize: 12, color: S.textMuted }}>{d} 天後</span>;
+};
+
+const Modal = ({ open, onClose, title, children, wide }) => {
+  if (!open) return null;
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal fade-in" style={wide ? { maxWidth: 800 } : {}} onClick={e => e.stopPropagation()}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700 }}>{title}</h2>
+          <button onClick={onClose} style={{ background: "none", padding: 4 }}><X size={20} color={S.textSec} /></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const Field = ({ label, required, children, half }) => (
+  <div style={{ flex: half ? "1 1 45%" : "1 1 100%", minWidth: half ? 200 : "auto", marginBottom: 14 }}>
+    <label className={`label${required ? " required" : ""}`}>{label}</label>
+    {children}
+  </div>
+);
+
+const PageHeader = ({ title, actions }) => (
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+    <h1 style={{ fontSize: 24, fontWeight: 700 }}>{title}</h1>
+    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>{actions}</div>
+  </div>
+);
+
+const FilterBar = ({ children }) => (
+  <div className="card" style={{ padding: "12px 16px", marginBottom: 16, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+    {children}
+  </div>
+);
+
+const SearchInput = ({ value, onChange, placeholder }) => (
+  <div style={{ position: "relative", flex: "1 1 200px" }}>
+    <Search size={16} style={{ position: "absolute", left: 10, top: 12, color: S.textMuted }} />
+    <input className="input" placeholder={placeholder} value={value} onChange={e => onChange(e.target.value)} style={{ paddingLeft: 32 }} />
+  </div>
+);
+
+const EmptyRow = ({ cols, text = "無資料" }) => <tr><td colSpan={cols} style={{ textAlign: "center", padding: 32, color: S.textMuted }}>{text}</td></tr>;
+
+
+/* SN Tags Display */
+const SNTags = ({ sns = [] }) => sns.length === 0 ? <span style={{ fontSize: 12, color: S.textMuted }}>未指定</span> : (
+  <div style={{ display: "flex", flexWrap: "wrap" }}>{sns.map(sn => <span key={sn} className="sn-tag"><Hash size={10} />{sn}</span>)}</div>
+);
+
+/* SN Editor */
+const SNEditor = ({ qty, serial_numbers = [], onChange }) => {
+  const count = Number(qty) || 0;
+  const sns = [...(serial_numbers || [])];
+  while (sns.length < count) sns.push("");
+  const update = (i, v) => { const next = [...sns]; next[i] = v; onChange(next.slice(0, count)); };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4, marginTop: 4 }}>
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <Hash size={12} color={S.textMuted} />
+          <input className="input" style={{ height: 32, fontSize: 12, fontFamily: "monospace" }} placeholder={`SN #${i + 1}`} value={sns[i] || ""} onChange={e => update(i, e.target.value)} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/* Collect all SNs from orders */
+const collectAllSNs = (orders, customers) => {
+  const r = [];
+  orders.forEach(o => {
+    const c = customers.find(x => x.id === o.customer_id);
+    (o.items || []).forEach(item => {
+      (item.serial_numbers || []).filter(Boolean).forEach(sn => {
+        r.push({ sn, product_id: item.product_id, product_name: item.product_name, order_id: o.id, customer_id: o.customer_id, customer_name: c?.company_name || o.customer_id });
+      });
+    });
+  });
+  return r;
+};
+
+/* ════════════════════ DASHBOARD ════════════════════ */
+const Dashboard = ({ customers, orders, payments, shipments, serviceTickets = [] }) => {
+  const active = orders.filter(o => !["COMPLETED","CANCELLED"].includes(o.status));
+  const overdueP = payments.filter(p => p.status === "OVERDUE");
+  const pendingP = payments.filter(p => p.status === "PENDING");
+  const overdueD = active.filter(o => daysDiff(o.expected_ship_date) < 0);
+  const nearD = active.filter(o => { const d = daysDiff(o.expected_ship_date); return d >= 0 && d <= 7; });
+  const readyToShip = orders.filter(o => o.status === "READY_TO_SHIP");
+
+  const twdTotal = orders.filter(o => o.currency === "TWD" && o.status !== "CANCELLED").reduce((s, o) => s + o.total, 0);
+  const usdTotal = orders.filter(o => o.currency === "USD" && o.status !== "CANCELLED").reduce((s, o) => s + o.total, 0);
+  const arTwd = payments.filter(p => ["PENDING","OVERDUE"].includes(p.status) && orders.find(o => o.id === p.order_id)?.currency === "TWD").reduce((s, p) => s + p.amount, 0);
+  const arUsd = payments.filter(p => ["PENDING","OVERDUE"].includes(p.status) && orders.find(o => o.id === p.order_id)?.currency === "USD").reduce((s, p) => s + p.amount, 0);
+
+  const statusDist = ORDER_STATUSES.map(s => ({ name: s.label, value: orders.filter(o => o.status === s.code).length, color: s.color })).filter(x => x.value > 0);
+  const regionDist = Object.entries(REGIONS).map(([k, v]) => ({ name: v, value: customers.filter(c => c.region === k).length })).filter(x => x.value > 0);
+  const getCustName = (id) => customers.find(c => c.id === id)?.company_name || id;
+
+  const kpis = [
+    { icon: <ClipboardList size={20} />, label: "進行中訂單", value: active.length, sub: `${readyToShip.length} 待出貨`, color: S.secondary },
+    { icon: <DollarSign size={20} />, label: "應收帳款 TWD", value: fmt(arTwd, "TWD"), sub: `${overdueP.filter(p => orders.find(o => o.id === p.order_id)?.currency === "TWD").length} 筆逾期`, color: arTwd > 0 ? S.warning : S.success },
+    { icon: <DollarSign size={20} />, label: "應收帳款 USD", value: fmt(arUsd, "USD"), sub: `${overdueP.filter(p => orders.find(o => o.id === p.order_id)?.currency === "USD").length} 筆逾期`, color: arUsd > 0 ? "#8B5CF6" : S.success },
+    { icon: <AlertTriangle size={20} />, label: "逾期警示", value: overdueP.length + overdueD.length, sub: `${overdueP.length} 收款 / ${overdueD.length} 交期`, color: (overdueP.length + overdueD.length) > 0 ? S.danger : S.success },
+    { icon: <Wrench size={20} />, label: "售後待處理", value: svcOpen, sub: svcUrgent > 0 ? `${svcUrgent} 件緊急` : "無緊急", color: svcOpen > 0 ? "#F59E0B" : S.success },
+  ];
+
+  return (
+    <div className="fade-in">
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>儀表板</h1>
+
+      <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 14, marginBottom: 20 }}>
+        {kpis.map((k, i) => (
+          <div key={i} className="card" style={{ padding: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              <div style={{ width: 34, height: 34, borderRadius: 8, background: k.color + "15", display: "flex", alignItems: "center", justifyContent: "center", color: k.color }}>{k.icon}</div>
+              <span style={{ fontSize: 12, color: S.textSec, fontWeight: 500 }}>{k.label}</span>
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>{k.value}</div>
+            <div style={{ fontSize: 12, color: S.textMuted, marginTop: 2 }}>{k.sub}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Alerts */}
+      {(overdueP.length > 0 || overdueD.length > 0 || nearD.length > 0) && (
+        <div className="card" style={{ padding: 16, marginBottom: 20, borderLeft: `4px solid ${S.danger}` }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: S.danger, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}><Bell size={16} /> 待處理警示</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+            {overdueP.map(p => {
+              const o = orders.find(x => x.id === p.order_id);
+              return (
+                <div key={p.id} style={{ fontSize: 13, display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: "#FEF2F2", borderRadius: 6 }}>
+                  <span style={{ color: S.danger, fontWeight: 600, minWidth: 80 }}>💰 收款逾期</span>
+                  <span>{getCustName(o?.customer_id)} — {p.order_id} {p.type} {fmt(p.amount, o?.currency)} (逾 {Math.abs(daysDiff(p.due_date))} 天)</span>
+                </div>
+              );
+            })}
+            {overdueD.map(o => (
+              <div key={o.id} style={{ fontSize: 13, display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: "#FEF2F2", borderRadius: 6 }}>
+                <span style={{ color: S.danger, fontWeight: 600, minWidth: 80 }}>🚚 交期逾期</span>
+                <span>{getCustName(o.customer_id)} — {o.id} 逾期 {Math.abs(daysDiff(o.expected_ship_date))} 天</span>
+              </div>
+            ))}
+            {nearD.map(o => (
+              <div key={o.id} style={{ fontSize: 13, display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: "#FEF3C7", borderRadius: 6 }}>
+                <span style={{ color: "#92400E", fontWeight: 600, minWidth: 80 }}>⏰ 即將交期</span>
+                <span>{getCustName(o.customer_id)} — {o.id} 剩 {daysDiff(o.expected_ship_date)} 天</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Charts */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 14, marginBottom: 20 }}>
+        <div className="card" style={{ padding: 18 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 14 }}>訂單狀態分布</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <PieChart><Pie data={statusDist} dataKey="value" cx="50%" cy="50%" outerRadius={70} innerRadius={38} paddingAngle={3}>{statusDist.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip formatter={(v, n) => [`${v} 筆`, n]} /></PieChart>
+          </ResponsiveContainer>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
+            {statusDist.map((s, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12 }}><div style={{ width: 8, height: 8, borderRadius: 2, background: s.color }} /><span style={{ color: S.textSec }}>{s.name} ({s.value})</span></div>)}
+          </div>
+        </div>
+        <div className="card" style={{ padding: 18 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 14 }}>客戶地區分布</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={regionDist} margin={{ top: 0, right: 0, bottom: 0, left: -20 }}><XAxis dataKey="name" tick={{ fontSize: 12 }} /><YAxis allowDecimals={false} tick={{ fontSize: 12 }} /><Tooltip formatter={(v) => [`${v} 家`]} /><Bar dataKey="value" fill={S.secondary} radius={[4, 4, 0, 0]} /></BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Recent */}
+      <div className="card" style={{ overflow: "hidden" }}>
+        <div style={{ padding: "14px 18px", borderBottom: `1px solid ${S.border}`, fontWeight: 700, fontSize: 14 }}>近期訂單</div>
+        <div style={{ overflowX: "auto" }}>
+          <table><thead><tr><th>訂單</th><th>客戶</th><th>金額</th><th>狀態</th><th>出貨日</th><th>交期</th></tr></thead>
+            <tbody>{orders.slice(0, 6).map(o => (
+              <tr key={o.id}><td style={{ fontWeight: 600 }}>{o.id} {o.is_urgent && <Badge bg="#FEE2E2" color="#991B1B">急</Badge>}</td><td>{getCustName(o.customer_id)}</td><td style={{ fontWeight: 600 }}>{fmt(o.total, o.currency)}</td><td><StatusBadge code={o.status} /></td><td>{o.expected_ship_date}</td><td><DeliveryBadge date={o.expected_ship_date} status={o.status} /></td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ════════════════════ CUSTOMER MODULE ════════════════════ */
+const CustomerList = ({ customers, onSelect, onAdd }) => {
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+  const filtered = customers.filter(c => {
+    const q = search.toLowerCase();
+    return (!q || c.company_name.toLowerCase().includes(q) || c.company_name_en.toLowerCase().includes(q)) && (typeFilter === "ALL" || c.customer_type === typeFilter);
+  });
+  return (
+    <div className="fade-in">
+      <PageHeader title="客戶管理" actions={<button className="btn btn-primary" onClick={onAdd}><Plus size={16} /> 新增客戶</button>} />
+      <FilterBar>
+        <SearchInput value={search} onChange={setSearch} placeholder="搜尋公司名稱..." />
+        <select className="input" style={{ width: "auto", minWidth: 100 }} value={typeFilter} onChange={e => setTypeFilter(e.target.value)}>
+          <option value="ALL">所有類型</option><option value="VIP">VIP</option><option value="NORMAL">一般</option><option value="POTENTIAL">潛在</option>
+        </select>
+        <span style={{ fontSize: 12, color: S.textMuted }}>{filtered.length} 筆</span>
+      </FilterBar>
+      <div className="card" style={{ overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <table><thead><tr><th>公司名稱</th><th>類型</th><th>地區</th><th>聯絡人</th><th>產業</th><th style={{ width: 60 }}></th></tr></thead>
+            <tbody>{filtered.map(c => (
+              <tr key={c.id} style={{ cursor: "pointer" }} onClick={() => onSelect(c.id)}>
+                <td><div style={{ fontWeight: 600 }}>{c.company_name}</div><div style={{ fontSize: 11, color: S.textMuted }}>{c.company_name_en}</div></td>
+                <td><TypeBadge type={c.customer_type} /></td><td><Badge bg="#F3F4F6" color="#374151">{REGIONS[c.region] || c.region}</Badge></td>
+                <td>{c.contacts?.find(ct => ct.is_primary)?.name || "-"}</td><td style={{ color: S.textSec }}>{c.industry || "-"}</td>
+                <td><button className="btn btn-sm btn-secondary" onClick={e => { e.stopPropagation(); onSelect(c.id); }}><Eye size={14} /></button></td>
+              </tr>
+            ))}{filtered.length === 0 && <EmptyRow cols={6} text="無符合條件的客戶" />}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CustomerDetail = ({ customer, onBack, onSave, onDelete, orders, serviceTickets = [] }) => {
+  const [editing, setEditing] = useState(!customer.id);
+  const [form, setForm] = useState({ ...customer });
+  const [contactModal, setContactModal] = useState(null);
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const custOrders = orders.filter(o => o.customer_id === customer.id);
+  const handleSave = () => { onSave(form); setEditing(false); };
+  const saveContact = (ct) => { const cs = [...(form.contacts || [])]; const i = cs.findIndex(c => c.id === ct.id); if (i >= 0) cs[i] = ct; else cs.push({ ...ct, id: `CT-${Date.now()}` }); set("contacts", cs); setContactModal(null); };
+  const removeContact = (ctId) => set("contacts", (form.contacts || []).filter(c => c.id !== ctId));
+
+  return (
+    <div className="fade-in">
+      <div className="no-print"><button className="btn btn-secondary" onClick={onBack} style={{ marginBottom: 16 }}><ArrowLeft size={16} /> 返回列表</button></div>
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20, flexWrap: "wrap", gap: 12 }}>
+          <div><h2 style={{ fontSize: 20, fontWeight: 700 }}>{form.company_name || "新增客戶"}</h2>{form.company_name_en && <div style={{ fontSize: 13, color: S.textSec }}>{form.company_name_en}</div>}</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {!editing ? (<><button className="btn" onClick={() => window.print()} title="列印"><Printer size={14} /></button><button className="btn btn-secondary" onClick={() => setEditing(true)}><Edit2 size={14} /> 編輯</button>{customer.id && <button className="btn btn-danger btn-sm" onClick={() => { if (confirm("確定刪除？")) onDelete(customer.id); }}><Trash2 size={14} /></button>}</>)
+            : (<><button className="btn btn-primary" onClick={handleSave}><Check size={14} /> 儲存</button>{customer.id && <button className="btn btn-secondary" onClick={() => { setForm({ ...customer }); setEditing(false); }}>取消</button>}</>)}
+          </div>
+        </div>
+        <div className="form-grid-2" style={{ display: "flex", flexWrap: "wrap", gap: "0 20px" }}>
+          <Field label="公司名稱" required half>{editing ? <input className="input" value={form.company_name || ""} onChange={e => set("company_name", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.company_name}</div>}</Field>
+          <Field label="英文名稱" half>{editing ? <input className="input" value={form.company_name_en || ""} onChange={e => set("company_name_en", e.target.value)} /> : <div style={{ padding: "8px 0", color: S.textSec }}>{form.company_name_en || "-"}</div>}</Field>
+          <Field label="客戶類型" required half>{editing ? <select className="input" value={form.customer_type || "NORMAL"} onChange={e => set("customer_type", e.target.value)}>{Object.entries(CUST_TYPES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}</select> : <div style={{ padding: "8px 0" }}><TypeBadge type={form.customer_type} /></div>}</Field>
+          <Field label="地區" required half>{editing ? <select className="input" value={form.region || "TW"} onChange={e => set("region", e.target.value)}>{Object.entries(REGIONS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select> : <div style={{ padding: "8px 0" }}>{REGIONS[form.region]}</div>}</Field>
+          <Field label="產業別" half>{editing ? <input className="input" value={form.industry || ""} onChange={e => set("industry", e.target.value)} /> : <div style={{ padding: "8px 0", color: S.textSec }}>{form.industry || "-"}</div>}</Field>
+          <Field label="電話" half>{editing ? <input className="input" value={form.phone || ""} onChange={e => set("phone", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.phone || "-"}</div>}</Field>
+          <Field label="網站" half>{editing ? <input className="input" value={form.website || ""} onChange={e => set("website", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.website ? <a href={`https://${form.website}`} target="_blank" style={{ color: S.secondary }}>{form.website}</a> : "-"}</div>}</Field>
+          <Field label="備註">{editing ? <textarea className="textarea" value={form.notes || ""} onChange={e => set("notes", e.target.value)} /> : <div style={{ padding: "8px 0", color: S.textSec }}>{form.notes || "-"}</div>}</Field>
+        </div>
+      </div>
+      {/* Contacts */}
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700 }}>聯絡人 ({(form.contacts || []).length})</h3>
+          {editing && <button className="btn btn-sm btn-secondary" onClick={() => setContactModal({ name: "", title: "", department: "", role: "採購", email: "", phone: "", is_primary: false })}><UserPlus size={14} /> 新增</button>}
+        </div>
+        {(form.contacts || []).length === 0 ? <div style={{ padding: 20, textAlign: "center", color: S.textMuted }}>尚無聯絡人</div> : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 10 }}>
+            {(form.contacts || []).map(ct => (
+              <div key={ct.id} style={{ border: `1px solid ${S.border}`, borderRadius: 8, padding: 12, position: "relative" }}>
+                {ct.is_primary && <span style={{ position: "absolute", top: 8, right: 8 }}><Star size={14} fill={S.gold} color={S.gold} /></span>}
+                <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 3 }}>{ct.name}</div>
+                <div style={{ fontSize: 12, color: S.textSec, marginBottom: 6 }}>{ct.title} / {ct.department}</div>
+                <div style={{ fontSize: 12, color: S.textSec, display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}><Mail size={12} /> {ct.email || "-"}</div>
+                <div style={{ fontSize: 12, color: S.textSec, display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}><Phone size={12} /> {ct.phone || "-"}</div>
+                <Badge bg="#F3F4F6" color="#374151">{ct.role}</Badge>
+                {editing && <div style={{ marginTop: 6, display: "flex", gap: 4 }}><button className="btn btn-sm btn-secondary" onClick={() => setContactModal(ct)}><Edit2 size={12} /></button><button className="btn btn-sm" style={{ color: S.danger }} onClick={() => removeContact(ct.id)}><Trash2 size={12} /></button></div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {customer.id && custOrders.length > 0 && (
+        <div className="card" style={{ overflow: "hidden" }}>
+          <div style={{ padding: "14px 18px", fontWeight: 700, fontSize: 14, borderBottom: `1px solid ${S.border}` }}>相關訂單 ({custOrders.length})</div>
+          <table><thead><tr><th>訂單</th><th>金額</th><th>狀態</th><th>出貨日</th></tr></thead><tbody>{custOrders.map(o => <tr key={o.id}><td style={{ fontWeight: 600 }}>{o.id}</td><td>{fmt(o.total, o.currency)}</td><td><StatusBadge code={o.status} /></td><td>{o.expected_ship_date}</td></tr>)}</tbody></table>
+        </div>
+      )}
+      <Modal open={!!contactModal} onClose={() => setContactModal(null)} title={contactModal?.id ? "編輯聯絡人" : "新增聯絡人"}>
+        
+      {/* 售後服務紀錄 */}
+      {(() => { const svcList = serviceTickets.filter(t => t.customer_id === customer.id); return svcList.length > 0 ? (
+        <Card style={{ marginTop: 16 }}><h3 style={{ fontWeight: 600, marginBottom: 12 }}><Wrench size={16} style={{ marginRight: 6, verticalAlign: "middle" }} />售後服務紀錄 ({svcList.length})</h3>
+        <table className="table"><thead><tr><th>服務單號</th><th>SN</th><th>類型</th><th>標題</th><th>狀態</th></tr></thead><tbody>
+        {svcList.map(t => { const ss = SERVICE_STATUSES.find(s => s.code === t.status) || {}; const st = SERVICE_TYPES.find(s => s.code === t.type) || {}; return (
+          <tr key={t.id}><td style={{ fontFamily: "monospace" }}>{t.id}</td><td>{t.serial_number ? <span className="sn-tag"><Hash size={10} />{t.serial_number}</span> : "—"}</td><td><Badge style={{ background: st.color + "22", color: st.color }}>{st.label}</Badge></td><td>{t.title}</td><td><Badge style={{ background: ss.bg, color: ss.color }}>{ss.label}</Badge></td></tr>
+        ); })}</tbody></table></Card>
+      ) : null; })()}
+{contactModal && <ContactForm contact={contactModal} onSave={saveContact} onCancel={() => setContactModal(null)} />}
+      </Modal>
+    </div>
+  );
+};
+
+const ContactForm = ({ contact, onSave, onCancel }) => {
+  const [f, setF] = useState({ ...contact });
+  const s = (k, v) => setF(p => ({ ...p, [k]: v }));
+  return (<div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0 20px" }}>
+      <Field label="姓名" required half><input className="input" value={f.name || ""} onChange={e => s("name", e.target.value)} /></Field>
+      <Field label="職稱" half><input className="input" value={f.title || ""} onChange={e => s("title", e.target.value)} /></Field>
+      <Field label="部門" half><input className="input" value={f.department || ""} onChange={e => s("department", e.target.value)} /></Field>
+      <Field label="角色" half><select className="input" value={f.role || "採購"} onChange={e => s("role", e.target.value)}><option>採購</option><option>工程</option><option>PM</option><option>主管</option></select></Field>
+      <Field label="Email" half><input className="input" value={f.email || ""} onChange={e => s("email", e.target.value)} /></Field>
+      <Field label="電話" half><input className="input" value={f.phone || ""} onChange={e => s("phone", e.target.value)} /></Field>
+    </div>
+    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, marginBottom: 16, cursor: "pointer" }}><input type="checkbox" checked={f.is_primary || false} onChange={e => s("is_primary", e.target.checked)} /> 設為主要聯絡人</label>
+    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}><button className="btn btn-secondary" onClick={onCancel}>取消</button><button className="btn btn-primary" onClick={() => onSave(f)} disabled={!f.name}><Check size={14} /> 確認</button></div>
+  </div>);
+};
+
+/* ════════════════════ ORDER MODULE ════════════════════ */
+const OrderList = ({ orders, customers, payments, onSelect, onAdd }) => {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const getCustName = (id) => customers.find(c => c.id === id)?.company_name || id;
+  const filtered = orders.filter(o => {
+    const q = search.toLowerCase();
+    return (!q || o.id.toLowerCase().includes(q) || getCustName(o.customer_id).toLowerCase().includes(q) || (o.customer_po || "").toLowerCase().includes(q)) && (statusFilter === "ALL" || o.status === statusFilter);
+  });
+  return (
+    <div className="fade-in">
+      <PageHeader title="訂單管理" actions={<button className="btn btn-primary" onClick={onAdd}><Plus size={16} /> 新增訂單</button>} />
+      <FilterBar>
+        <SearchInput value={search} onChange={setSearch} placeholder="搜尋訂單/客戶/PO..." />
+        <select className="input" style={{ width: "auto", minWidth: 120 }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="ALL">所有狀態</option>{ORDER_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}
+        </select>
+        <span style={{ fontSize: 12, color: S.textMuted }}>{filtered.length} 筆</span>
+      </FilterBar>
+      <div className="card" style={{ overflow: "hidden" }}><div style={{ overflowX: "auto" }}>
+        <table><thead><tr><th>訂單</th><th>客戶</th><th>產品</th><th>金額</th><th>狀態</th><th>出貨日</th><th>交期</th><th>收款</th></tr></thead>
+          <tbody>{filtered.map(o => {
+            const pays = payments.filter(p => p.order_id === o.id);
+            const rcv = pays.filter(p => p.status === "RECEIVED").length;
+            const ovd = pays.filter(p => p.status === "OVERDUE").length;
+            return (
+              <tr key={o.id} style={{ cursor: "pointer" }} onClick={() => onSelect(o.id)}>
+                <td><div style={{ fontWeight: 600 }}>{o.id}</div>{o.is_urgent && <Badge bg="#FEE2E2" color="#991B1B">急單</Badge>}</td>
+                <td><div>{getCustName(o.customer_id)}</div>{o.customer_po && <div style={{ fontSize: 11, color: S.textMuted }}>PO: {o.customer_po}</div>}</td>
+                <td style={{ maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{o.items?.map(i => i.product_id).join(", ")}</td>
+                <td style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{fmt(o.total, o.currency)}</td>
+                <td><StatusBadge code={o.status} /></td>
+                <td>{o.expected_ship_date}</td>
+                <td><DeliveryBadge date={o.expected_ship_date} status={o.status} /></td>
+                <td>{ovd > 0 ? <Badge bg="#FEE2E2" color="#991B1B">逾期</Badge> : rcv === pays.length && pays.length > 0 ? <Badge bg="#DCFCE7" color="#166534">已收齊</Badge> : <Badge bg="#F3F4F6" color="#374151">{rcv}/{pays.length}</Badge>}</td>
+              </tr>
+            );
+          })}{filtered.length === 0 && <EmptyRow cols={8} />}</tbody>
+        </table></div>
+      </div>
+    </div>
+  );
+};
+
+const OrderDetail = ({ order, customers, payments, shipments, onBack, onSave, onDelete, serviceTickets = [] }) => {
+  const [editing, setEditing] = useState(!order.id);
+  const [form, setForm] = useState({ ...order, items: order.items || [{ product_id: "", product_name: "", qty: 1, unit_price: 0, amount: 0, serial_numbers: [] }] });
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const cust = customers.find(c => c.id === form.customer_id);
+  const orderPays = payments.filter(p => p.order_id === order.id);
+  const orderShips = shipments.filter(s => s.order_id === order.id);
+
+  const updateItem = (idx, key, val) => {
+    const items = [...form.items]; items[idx] = { ...items[idx], [key]: val };
+    if (key === "product_id") { const p = PRODUCTS.find(pr => pr.id === val); if (p) items[idx].product_name = p.name; }
+    if (key === "qty" || key === "unit_price") items[idx].amount = (Number(items[idx].qty) || 0) * (Number(items[idx].unit_price) || 0);
+    const sub = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    setForm(f => ({ ...f, items, subtotal: sub, total: sub + (Number(f.tax) || 0) }));
+  };
+  const addItem = () => setForm(f => ({ ...f, items: [...f.items, { product_id: "", product_name: "", qty: 1, unit_price: 0, amount: 0, serial_numbers: [] }] }));
+  const updateItemSN = (idx, sns) => { const items = [...form.items]; items[idx] = { ...items[idx], serial_numbers: sns }; setForm(f => ({ ...f, items })); };
+  const removeItem = (idx) => { const items = form.items.filter((_, i) => i !== idx); const sub = items.reduce((s, i) => s + (Number(i.amount) || 0), 0); setForm(f => ({ ...f, items, subtotal: sub, total: sub + (Number(f.tax) || 0) })); };
+  const handleSave = () => { const o = { ...form, id: form.id || genId("SO") }; onSave(o); setEditing(false); };
+  const canAdvance = (c) => { const flow = ["PENDING","CONFIRMED","IN_PRODUCTION","READY_TO_SHIP","SHIPPED","COMPLETED"]; const i = flow.indexOf(c); return i >= 0 && i < flow.length - 1 ? flow[i + 1] : null; };
+  const advanceStatus = () => { const next = canAdvance(form.status); if (next) { const u = { ...form, status: next }; if (next === "SHIPPED") u.actual_ship_date = today(); setForm(u); onSave(u); } };
+
+  return (
+    <div className="fade-in">
+      <button className="btn btn-secondary" onClick={onBack} style={{ marginBottom: 16 }}><ArrowLeft size={16} /> 返回列表</button>
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}><h2 style={{ fontSize: 20, fontWeight: 700 }}>{form.id || "新增訂單"}</h2>{form.status && <StatusBadge code={form.status} />}{form.is_urgent && <Badge bg="#FEE2E2" color="#991B1B">急單</Badge>}</div>
+            {cust && <div style={{ fontSize: 13, color: S.textSec }}>{cust.company_name}</div>}
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {!editing && canAdvance(form.status) && <button className="btn btn-primary" onClick={advanceStatus}><ChevronRight size={14} /> 推進至「{ORDER_STATUSES.find(s => s.code === canAdvance(form.status))?.label}」</button>}
+            {!editing ? (<><button className="btn btn-secondary" onClick={() => setEditing(true)}><Edit2 size={14} /> 編輯</button>{order.id && <button className="btn btn-danger btn-sm" onClick={() => { if (confirm("確定刪除？")) onDelete(order.id); }}><Trash2 size={14} /></button>}</>)
+            : (<><button className="btn btn-primary" onClick={handleSave}><Check size={14} /> 儲存</button>{order.id && <button className="btn btn-secondary" onClick={() => { setForm({ ...order }); setEditing(false); }}>取消</button>}</>)}
+          </div>
+        </div>
+        {/* Status Flow */}
+        {form.id && <div className="status-flow" style={{ display: "flex", gap: 3, marginBottom: 18, overflowX: "auto", padding: "2px 0" }}>
+          {ORDER_STATUSES.filter(s => s.code !== "CANCELLED").map((s, i) => {
+            const flow = ["PENDING","CONFIRMED","IN_PRODUCTION","READY_TO_SHIP","SHIPPED","COMPLETED"];
+            const cur = flow.indexOf(form.status); const pos = flow.indexOf(s.code); const active = pos <= cur;
+            return <div key={s.code} style={{ display: "flex", alignItems: "center", gap: 3 }}>
+              <div style={{ padding: "5px 10px", borderRadius: 6, fontSize: 12, fontWeight: pos === cur ? 600 : 400, background: pos === cur ? s.bg : active ? s.color + "10" : "#F9FAFB", color: pos === cur ? s.color : active ? s.color : S.textMuted, border: pos === cur ? `2px solid ${s.color}` : "1px solid transparent", whiteSpace: "nowrap" }}>{s.label}</div>
+              {i < 5 && <ChevronRight size={12} color={S.textMuted} />}
+            </div>;
+          })}
+        </div>}
+        {/* Fields */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "0 20px" }}>
+          <Field label="客戶" required half>{editing ? <select className="input" value={form.customer_id || ""} onChange={e => set("customer_id", e.target.value)}><option value="">選擇客戶</option>{customers.map(c => <option key={c.id} value={c.id}>{c.company_name}</option>)}</select> : <div style={{ padding: "8px 0" }}>{cust?.company_name || "-"}</div>}</Field>
+          <Field label="客戶 PO" half>{editing ? <input className="input" value={form.customer_po || ""} onChange={e => set("customer_po", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.customer_po || "-"}</div>}</Field>
+          <Field label="訂單狀態" required half>{editing ? <select className="input" value={form.status || "PENDING"} onChange={e => set("status", e.target.value)}>{ORDER_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select> : <div style={{ padding: "8px 0" }}><StatusBadge code={form.status} /></div>}</Field>
+          <Field label="訂單日期" required half>{editing ? <input className="input" type="date" value={form.order_date || today()} onChange={e => set("order_date", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.order_date}</div>}</Field>
+          <Field label="幣別" required half>{editing ? <select className="input" value={form.currency || "TWD"} onChange={e => set("currency", e.target.value)}>{CURRENCIES.map(c => <option key={c}>{c}</option>)}</select> : <div style={{ padding: "8px 0" }}>{form.currency}</div>}</Field>
+          <Field label="預計出貨日" required half>{editing ? <input className="input" type="date" value={form.expected_ship_date || ""} onChange={e => set("expected_ship_date", e.target.value)} /> : <div style={{ padding: "8px 0", display: "flex", alignItems: "center", gap: 8 }}>{form.expected_ship_date} <DeliveryBadge date={form.expected_ship_date} status={form.status} /></div>}</Field>
+          <Field label="交貨條款" half>{editing ? <select className="input" value={form.delivery_terms || "FOB_TW"} onChange={e => set("delivery_terms", e.target.value)}>{DELIVERY_TERMS.map(d => <option key={d.code} value={d.code}>[{d.group}] {d.label} — {d.desc}</option>)}</select> : <div style={{ padding: "8px 0" }}>{DELIVERY_TERMS.find(d => d.code === form.delivery_terms)?.label || form.delivery_terms || "-"}</div>}</Field>
+          <Field label="送貨地址" half>{editing ? <input className="input" value={form.ship_to || ""} onChange={e => set("ship_to", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.ship_to || "-"}</div>}</Field>
+          <Field label="付款條件" half>{editing ? <input className="input" value={form.payment_terms || "T/T 50%+50%"} onChange={e => set("payment_terms", e.target.value)} /> : <div style={{ padding: "8px 0" }}>{form.payment_terms}</div>}</Field>
+          <Field label="急單" half>{editing ? <label style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 0", cursor: "pointer" }}><input type="checkbox" checked={form.is_urgent || false} onChange={e => set("is_urgent", e.target.checked)} /> 標記為急單</label> : <div style={{ padding: "8px 0" }}>{form.is_urgent ? "是" : "否"}</div>}</Field>
+          {form.actual_ship_date && <Field label="實際出貨日" half><div style={{ padding: "8px 0" }}>{form.actual_ship_date}</div></Field>}
+          <Field label="備註">{editing ? <textarea className="textarea" value={form.notes || ""} onChange={e => set("notes", e.target.value)} /> : <div style={{ padding: "8px 0", color: S.textSec }}>{form.notes || "-"}</div>}</Field>
+        </div>
+      </div>
+      {/* Items */}
+      <div className="card" style={{ padding: 24, marginBottom: 16 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}><h3 style={{ fontSize: 16, fontWeight: 700 }}>訂單明細</h3>{editing && <button className="btn btn-sm btn-secondary" onClick={addItem}><Plus size={14} /> 新增</button>}</div>
+        <div style={{ overflowX: "auto" }}><table><thead><tr><th>產品</th><th>數量</th><th>單價</th><th>金額</th><th>設備序號 (SN)</th>{editing && <th style={{ width: 40 }}></th>}</tr></thead><tbody>{form.items.map((item, idx) => (
+          <tr key={idx}>
+            <td>{editing ? <select className="input" value={item.product_id} onChange={e => updateItem(idx, "product_id", e.target.value)} style={{ minWidth: 200 }}><option value="">選擇產品</option>{PRODUCTS.map(p => <option key={p.id} value={p.id}>{p.id} - {p.name}</option>)}</select> : <div><div style={{ fontWeight: 600 }}>{item.product_id}</div><div style={{ fontSize: 12, color: S.textSec }}>{item.product_name}</div></div>}</td>
+            <td>{editing ? <input className="input" type="number" min="1" value={item.qty} onChange={e => updateItem(idx, "qty", e.target.value)} style={{ width: 80 }} /> : item.qty}</td>
+            <td>{editing ? <input className="input" type="number" value={item.unit_price} onChange={e => updateItem(idx, "unit_price", e.target.value)} style={{ width: 130 }} /> : fmt(item.unit_price, form.currency)}</td>
+            <td style={{ fontWeight: 600 }}>{fmt(item.amount, form.currency)}</td>
+          <td style={{ minWidth: 180 }}>{editing ? <SNEditor qty={item.qty} serial_numbers={item.serial_numbers} onChange={sns => updateItemSN(idx, sns)} /> : <SNTags sns={item.serial_numbers} />}</td>
+            {editing && <td><button className="btn btn-sm" style={{ color: S.danger }} onClick={() => removeItem(idx)}><Trash2 size={14} /></button></td>}
+          </tr>
+        ))}</tbody></table></div>
+        <div style={{ borderTop: `1px solid ${S.border}`, paddingTop: 12, marginTop: 4, display: "flex", justifyContent: "flex-end", gap: 20 }}>
+          <div style={{ textAlign: "right" }}><div style={{ fontSize: 12, color: S.textSec }}>小計</div><div style={{ fontSize: 16, fontWeight: 600 }}>{fmt(form.subtotal, form.currency)}</div></div>
+          <div style={{ textAlign: "right" }}><div style={{ fontSize: 12, color: S.textSec }}>稅額</div>{editing ? <input className="input" type="number" value={form.tax || 0} onChange={e => { set("tax", Number(e.target.value)); set("total", (form.subtotal || 0) + Number(e.target.value)); }} style={{ width: 110, textAlign: "right" }} /> : <div style={{ fontSize: 16 }}>{fmt(form.tax || 0, form.currency)}</div>}</div>
+          <div style={{ textAlign: "right" }}><div style={{ fontSize: 12, color: S.textSec }}>總計</div><div style={{ fontSize: 20, fontWeight: 700, color: S.primary }}>{fmt(form.total, form.currency)}</div></div>
+        </div>
+      </div>
+      {/* Payments */}
+      {order.id && <div className="card" style={{ overflow: "hidden", marginBottom: 16 }}>
+        <div style={{ padding: "14px 18px", fontWeight: 700, fontSize: 14, borderBottom: `1px solid ${S.border}` }}>收款紀錄</div>
+        {orderPays.length === 0 ? <div style={{ padding: 20, textAlign: "center", color: S.textMuted }}>尚無收款紀錄</div> :
+        <table><thead><tr><th>類型</th><th>應收</th><th>應收日</th><th>狀態</th><th>實收日</th><th>實收金額</th><th>銀行參考</th></tr></thead>
+          <tbody>{orderPays.map(p => <tr key={p.id}><td style={{ fontWeight: 600 }}>{p.type}</td><td>{fmt(p.amount, form.currency)}</td><td>{p.due_date}</td><td><StatusBadge code={p.status} list={PAY_STATUSES} /></td><td>{p.received_date || "-"}</td><td>{p.received_amount ? fmt(p.received_amount, form.currency) : "-"}</td><td style={{ fontSize: 12, color: S.textSec }}>{p.bank_ref || "-"}</td></tr>)}</tbody></table>}
+      </div>}
+      {/* Shipments */}
+      {order.id && orderShips.length > 0 && <div className="card" style={{ overflow: "hidden" }}>
+        <div style={{ padding: "14px 18px", fontWeight: 700, fontSize: 14, borderBottom: `1px solid ${S.border}` }}>出貨紀錄</div>
+        <table><thead><tr><th>出貨單</th><th>日期</th><th>承運</th><th>追蹤號</th><th>狀態</th></tr></thead>
+          <tbody>{orderShips.map(sh => <tr key={sh.id}><td style={{ fontWeight: 600 }}>{sh.id}</td><td>{sh.ship_date}</td><td>{sh.carrier}</td><td style={{ fontSize: 12 }}>{sh.tracking_no}</td><td><StatusBadge code={sh.status} list={SHIP_STATUSES} /></td></tr>)}</tbody></table>
+      </div>}
+    </div>
+
+      {/* 相關售後服務 */}
+      {(() => { const svcList = serviceTickets.filter(t => t.order_id === form.id); return svcList.length > 0 ? (
+        <div className="card" style={{ overflow: "hidden", marginBottom: 16 }}>
+        <div style={{ padding: "14px 18px", fontWeight: 700, fontSize: 14, borderBottom: "1px solid " + S.border }}><Wrench size={16} style={{ marginRight: 6, verticalAlign: "middle" }} />相關售後服務 ({svcList.length})</div>
+        <table><thead><tr><th>服務單號</th><th>SN</th><th>類型</th><th>狀態</th><th>標題</th></tr></thead><tbody>
+        {svcList.map(t => { const ss = SERVICE_STATUSES.find(s => s.code === t.status) || {}; const st = SERVICE_TYPES.find(s => s.code === t.type) || {}; return (
+          <tr key={t.id}><td style={{ fontFamily: "monospace" }}>{t.id}</td><td>{t.serial_number ? <span className="sn-tag"><Hash size={10} />{t.serial_number}</span> : "—"}</td><td><Badge style={{ background: st.color + "22", color: st.color }}>{st.label}</Badge></td><td><Badge style={{ background: ss.bg, color: ss.color }}>{ss.label}</Badge></td><td>{t.title}</td></tr>
+        ); })}</tbody></table></div>
+      ) : null; })()}
+  );
+};
+
+/* ════════════════════ PAYMENT MODULE (Phase 2 NEW) ════════════════════ */
+const PaymentList = ({ payments, orders, customers, onUpdate }) => {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [confirmModal, setConfirmModal] = useState(null);
+  const getCustName = (orderId) => { const o = orders.find(x => x.id === orderId); return customers.find(c => c.id === o?.customer_id)?.company_name || "-"; };
+  const getOrder = (orderId) => orders.find(x => x.id === orderId);
+
+  const enriched = payments.map(p => {
+    const o = getOrder(p.order_id);
+    return { ...p, customer_name: getCustName(p.order_id), currency: o?.currency || "TWD", order_status: o?.status };
+  });
+
+  const filtered = enriched.filter(p => {
+    const q = search.toLowerCase();
+    return (!q || p.order_id.toLowerCase().includes(q) || p.customer_name.toLowerCase().includes(q)) && (statusFilter === "ALL" || p.status === statusFilter);
+  });
+
+  const totalAR = filtered.filter(p => ["PENDING","OVERDUE","PARTIAL"].includes(p.status));
+  const arTwd = totalAR.filter(p => p.currency === "TWD").reduce((s, p) => s + (p.amount - (p.received_amount || 0)), 0);
+  const arUsd = totalAR.filter(p => p.currency === "USD").reduce((s, p) => s + (p.amount - (p.received_amount || 0)), 0);
+  const overdueCount = filtered.filter(p => p.status === "OVERDUE").length;
+  const receivedThisMonth = filtered.filter(p => p.status === "RECEIVED" && p.received_date?.startsWith(new Date().toISOString().slice(0, 7)));
+
+  const handleConfirmReceived = (pay) => setConfirmModal({ ...pay, received_date: today(), received_amount: pay.amount - (pay.received_amount || 0), bank_ref: pay.bank_ref || "" });
+
+  const saveReceived = () => {
+    if (!confirmModal) return;
+    const totalReceived = (confirmModal.original_received || 0) + Number(confirmModal.received_amount || 0);
+    const newStatus = totalReceived >= confirmModal.amount ? "RECEIVED" : "PARTIAL";
+    onUpdate(confirmModal.id, {
+      status: newStatus,
+      received_date: confirmModal.received_date,
+      received_amount: totalReceived,
+      bank_ref: confirmModal.bank_ref,
+      notes: confirmModal.notes || "",
+    });
+    setConfirmModal(null);
+  };
+
+  return (
+    <div className="fade-in">
+      <PageHeader title="收款管理" actions={null} />
+
+      {/* AR Summary */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 12, marginBottom: 18 }}>
+        <div className="card" style={{ padding: 16, borderLeft: `4px solid ${S.warning}` }}>
+          <div style={{ fontSize: 12, color: S.textSec, marginBottom: 4 }}>應收帳款 TWD</div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>{fmt(arTwd, "TWD")}</div>
+        </div>
+        <div className="card" style={{ padding: 16, borderLeft: "4px solid #8B5CF6" }}>
+          <div style={{ fontSize: 12, color: S.textSec, marginBottom: 4 }}>應收帳款 USD</div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>{fmt(arUsd, "USD")}</div>
+        </div>
+        <div className="card" style={{ padding: 16, borderLeft: `4px solid ${S.danger}` }}>
+          <div style={{ fontSize: 12, color: S.textSec, marginBottom: 4 }}>逾期筆數</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: overdueCount > 0 ? S.danger : S.success }}>{overdueCount}</div>
+        </div>
+        <div className="card" style={{ padding: 16, borderLeft: `4px solid ${S.success}` }}>
+          <div style={{ fontSize: 12, color: S.textSec, marginBottom: 4 }}>本月已收</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: S.success }}>{receivedThisMonth.length} 筆</div>
+        </div>
+      </div>
+
+      <FilterBar>
+        <SearchInput value={search} onChange={setSearch} placeholder="搜尋訂單/客戶..." />
+        <select className="input" style={{ width: "auto", minWidth: 120 }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="ALL">所有狀態</option>{PAY_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}
+        </select>
+        <span style={{ fontSize: 12, color: S.textMuted }}>{filtered.length} 筆</span>
+      </FilterBar>
+
+      <div className="card" style={{ overflow: "hidden" }}><div style={{ overflowX: "auto" }}>
+        <table><thead><tr><th>訂單</th><th>客戶</th><th>類型</th><th>應收</th><th>應收日</th><th>狀態</th><th>實收</th><th>銀行參考</th><th style={{ width: 90 }}>操作</th></tr></thead>
+          <tbody>{filtered.map(p => (
+            <tr key={p.id} style={{ background: p.status === "OVERDUE" ? "#FEF2F210" : "transparent" }}>
+              <td style={{ fontWeight: 600 }}>{p.order_id}</td>
+              <td>{p.customer_name}</td>
+              <td><Badge bg={p.type === "訂金" ? "#DBEAFE" : "#EDE9FE"} color={p.type === "訂金" ? "#1E40AF" : "#6B21A8"}>{p.type}</Badge></td>
+              <td style={{ fontWeight: 600 }}>{fmt(p.amount, p.currency)}</td>
+              <td>
+                {p.due_date}
+                {["PENDING","OVERDUE"].includes(p.status) && daysDiff(p.due_date) < 0 && <div style={{ fontSize: 11, color: S.danger }}>逾 {Math.abs(daysDiff(p.due_date))} 天</div>}
+                {p.status === "PENDING" && daysDiff(p.due_date) >= 0 && daysDiff(p.due_date) <= 7 && <div style={{ fontSize: 11, color: "#92400E" }}>剩 {daysDiff(p.due_date)} 天</div>}
+              </td>
+              <td><StatusBadge code={p.status} list={PAY_STATUSES} /></td>
+              <td>{p.received_amount ? <span>{fmt(p.received_amount, p.currency)}<div style={{ fontSize: 11, color: S.textMuted }}>{p.received_date}</div></span> : "-"}</td>
+              <td style={{ fontSize: 12, color: S.textSec }}>{p.bank_ref || "-"}</td>
+              <td>
+                {["PENDING","OVERDUE","PARTIAL"].includes(p.status) && (
+                  <button className="btn btn-sm btn-success" onClick={() => handleConfirmReceived(p)}><Check size={12} /> 確認收款</button>
+                )}
+              </td>
+            </tr>
+          ))}{filtered.length === 0 && <EmptyRow cols={9} />}</tbody>
+        </table></div>
+      </div>
+
+      {/* Confirm Payment Modal */}
+      <Modal open={!!confirmModal} onClose={() => setConfirmModal(null)} title="確認收款">
+        {confirmModal && (<div>
+          <div style={{ background: S.bg, borderRadius: 8, padding: 14, marginBottom: 16 }}>
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 13 }}>
+              <div><span style={{ color: S.textSec }}>訂單：</span><strong>{confirmModal.order_id}</strong></div>
+              <div><span style={{ color: S.textSec }}>類型：</span><strong>{confirmModal.type}</strong></div>
+              <div><span style={{ color: S.textSec }}>應收：</span><strong>{fmt(confirmModal.amount, confirmModal.currency)}</strong></div>
+              {confirmModal.received_amount > 0 && <div><span style={{ color: S.textSec }}>已收：</span><strong>{fmt(confirmModal.original_received || 0, confirmModal.currency)}</strong></div>}
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "0 20px" }}>
+            <Field label="收款日期" required half><input className="input" type="date" value={confirmModal.received_date} onChange={e => setConfirmModal(p => ({ ...p, received_date: e.target.value }))} /></Field>
+            <Field label="收款金額" required half><input className="input" type="number" value={confirmModal.received_amount} onChange={e => setConfirmModal(p => ({ ...p, received_amount: e.target.value }))} /></Field>
+            <Field label="銀行參考號" half><input className="input" value={confirmModal.bank_ref} onChange={e => setConfirmModal(p => ({ ...p, bank_ref: e.target.value }))} placeholder="如 CTBC-20250209-1234" /></Field>
+            <Field label="備註" half><input className="input" value={confirmModal.notes || ""} onChange={e => setConfirmModal(p => ({ ...p, notes: e.target.value }))} /></Field>
+          </div>
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
+            <button className="btn btn-secondary" onClick={() => setConfirmModal(null)}>取消</button>
+            <button className="btn btn-success" onClick={saveReceived}><Check size={14} /> 確認收款</button>
+          </div>
+        </div>)}
+      </Modal>
+    </div>
+  );
+};
+
+/* ════════════════════ SHIPPING MODULE (Phase 2 NEW) ════════════════════ */
+const ShippingList = ({ shipments, orders, customers, onAdd, onUpdate }) => {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [editModal, setEditModal] = useState(null);
+  const getCustName = (orderId) => { const o = orders.find(x => x.id === orderId); return customers.find(c => c.id === o?.customer_id)?.company_name || "-"; };
+  const getOrder = (orderId) => orders.find(x => x.id === orderId);
+
+  const readyOrders = orders.filter(o => ["READY_TO_SHIP","SHIPPED"].includes(o.status) && !shipments.find(s => s.order_id === o.id));
+
+  const enriched = shipments.map(s => ({ ...s, customer_name: getCustName(s.order_id), currency: getOrder(s.order_id)?.currency }));
+  const filtered = enriched.filter(s => {
+    const q = search.toLowerCase();
+    return (!q || s.id.toLowerCase().includes(q) || s.order_id.toLowerCase().includes(q) || s.customer_name.toLowerCase().includes(q)) && (statusFilter === "ALL" || s.status === statusFilter);
+  });
+
+  const saveShipment = (sh) => {
+    if (shipments.find(s => s.id === sh.id)) {
+      onUpdate(sh.id, sh);
+    } else {
+      onAdd(sh);
+    }
+    setEditModal(null);
+  };
+
+  const newShipment = (orderId) => ({
+    id: genId("SHP"), order_id: orderId, ship_date: today(), carrier: "", tracking_no: "",
+    delivery_terms: getOrder(orderId)?.delivery_terms || "FOB_TW", ship_to: getOrder(orderId)?.ship_to || "",
+    status: "PREPARING", documents: { invoice: false, packing: false, cert: false, manual: false, warranty: false }, notes: ""
+  });
+
+  return (
+    <div className="fade-in">
+      <PageHeader title="出貨管理" actions={
+        readyOrders.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <select className="input" id="newShipOrder" style={{ width: "auto", minWidth: 180 }}>
+              {readyOrders.map(o => <option key={o.id} value={o.id}>{o.id} — {customers.find(c => c.id === o.customer_id)?.company_name}</option>)}
+            </select>
+            <button className="btn btn-primary" onClick={() => { const sel = document.getElementById("newShipOrder")?.value; if (sel) setEditModal(newShipment(sel)); }}><Plus size={16} /> 建立出貨單</button>
+          </div>
+        )
+      } />
+
+      {/* Summary */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 12, marginBottom: 18 }}>
+        {SHIP_STATUSES.map(ss => {
+          const count = shipments.filter(s => s.status === ss.code).length;
+          return <div key={ss.code} className="card" style={{ padding: 14, borderLeft: `4px solid ${ss.color}` }}>
+            <div style={{ fontSize: 12, color: S.textSec }}>{ss.label}</div>
+            <div style={{ fontSize: 20, fontWeight: 700 }}>{count}</div>
+          </div>;
+        })}
+      </div>
+
+      <FilterBar>
+        <SearchInput value={search} onChange={setSearch} placeholder="搜尋出貨單/訂單/客戶..." />
+        <select className="input" style={{ width: "auto", minWidth: 120 }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="ALL">所有狀態</option>{SHIP_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}
+        </select>
+        <span style={{ fontSize: 12, color: S.textMuted }}>{filtered.length} 筆</span>
+      </FilterBar>
+
+      <div className="card" style={{ overflow: "hidden" }}><div style={{ overflowX: "auto" }}>
+        <table><thead><tr><th>出貨單</th><th>訂單</th><th>客戶</th><th>出貨日</th><th>承運</th><th>追蹤號</th><th>條款</th><th>狀態</th><th>文件</th><th style={{ width: 60 }}></th></tr></thead>
+          <tbody>{filtered.map(sh => {
+            const docsOk = SHIP_DOCS.every(d => sh.documents?.[d.key]);
+            return (
+              <tr key={sh.id}>
+                <td style={{ fontWeight: 600 }}>{sh.id}</td>
+                <td>{sh.order_id}</td>
+                <td>{sh.customer_name}</td>
+                <td>{sh.ship_date}</td>
+                <td style={{ fontSize: 13 }}>{sh.carrier || "-"}</td>
+                <td style={{ fontSize: 12 }}>{sh.tracking_no || "-"}</td>
+                <td><Badge bg="#F3F4F6" color="#374151">{DELIVERY_TERMS.find(d => d.code === sh.delivery_terms)?.label || sh.delivery_terms}</Badge></td>
+                <td><StatusBadge code={sh.status} list={SHIP_STATUSES} /></td>
+                <td>{docsOk ? <Badge bg="#DCFCE7" color="#166534">✓ 齊全</Badge> : <Badge bg="#FEF3C7" color="#92400E">未齊</Badge>}</td>
+                <td><button className="btn btn-sm btn-secondary" onClick={() => setEditModal({ ...sh })}><Edit2 size={12} /></button></td>
+              </tr>
+            );
+          })}{filtered.length === 0 && <EmptyRow cols={10} text={readyOrders.length > 0 ? "尚無出貨單，請從上方選擇訂單建立" : "無出貨紀錄"} />}</tbody>
+        </table></div>
+      </div>
+
+      {/* Edit Shipment Modal */}
+      <Modal open={!!editModal} onClose={() => setEditModal(null)} title={shipments.find(s => s.id === editModal?.id) ? `編輯出貨單 ${editModal?.id}` : "新增出貨單"} wide>
+        {editModal && <ShipmentForm shipment={editModal} onSave={saveShipment} onCancel={() => setEditModal(null)} />}
+      </Modal>
+    </div>
+  );
+};
+
+const ShipmentForm = ({ shipment, onSave, onCancel }) => {
+  const [f, setF] = useState({ ...shipment });
+  const s = (k, v) => setF(p => ({ ...p, [k]: v }));
+  const toggleDoc = (key) => setF(p => ({ ...p, documents: { ...p.documents, [key]: !p.documents?.[key] } }));
+
+  return (<div>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "0 20px" }}>
+      <Field label="訂單編號" half><div style={{ padding: "8px 0", fontWeight: 600 }}>{f.order_id}</div></Field>
+      <Field label="出貨狀態" required half>
+        <select className="input" value={f.status} onChange={e => s("status", e.target.value)}>
+          {SHIP_STATUSES.map(st => <option key={st.code} value={st.code}>{st.label}</option>)}
+        </select>
+      </Field>
+      <Field label="出貨日期" required half><input className="input" type="date" value={f.ship_date} onChange={e => s("ship_date", e.target.value)} /></Field>
+      <Field label="承運方式" half><input className="input" value={f.carrier || ""} onChange={e => s("carrier", e.target.value)} placeholder="如 FedEx, DHL, 新竹物流" /></Field>
+      <Field label="追蹤號碼" half><input className="input" value={f.tracking_no || ""} onChange={e => s("tracking_no", e.target.value)} /></Field>
+      <Field label="交貨條款" required half>
+        <select className="input" value={f.delivery_terms} onChange={e => s("delivery_terms", e.target.value)}>
+          {DELIVERY_TERMS.map(d => <option key={d.code} value={d.code}>{d.label} — {d.desc}</option>)}
+        </select>
+      </Field>
+      <Field label="送貨地址"><input className="input" value={f.ship_to || ""} onChange={e => s("ship_to", e.target.value)} /></Field>
+      <Field label="備註"><textarea className="textarea" value={f.notes || ""} onChange={e => s("notes", e.target.value)} placeholder="棧板數、重量、特殊注意事項..." /></Field>
+    </div>
+
+    {/* Document Checklist */}
+    <div style={{ marginBottom: 20 }}>
+      <div className="label" style={{ marginBottom: 8 }}>出貨文件檢查表</div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        {SHIP_DOCS.map(d => (
+          <button key={d.key} onClick={() => toggleDoc(d.key)} style={{
+            display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 6,
+            border: `1px solid ${f.documents?.[d.key] ? S.success : S.border}`,
+            background: f.documents?.[d.key] ? "#F0FDF4" : "#fff",
+            color: f.documents?.[d.key] ? "#166534" : S.textSec, fontSize: 13, cursor: "pointer",
+          }}>
+            {f.documents?.[d.key] ? <CheckSquare size={16} color={S.success} /> : <Square size={16} />}
+            {d.label}
+          </button>
+        ))}
+      </div>
+      {SHIP_DOCS.every(d => f.documents?.[d.key]) && <div style={{ marginTop: 8, fontSize: 12, color: S.success, fontWeight: 600 }}>✓ 所有文件已備齊</div>}
+    </div>
+
+    <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+      <button className="btn btn-secondary" onClick={onCancel}>取消</button>
+      <button className="btn btn-primary" onClick={() => onSave(f)}><Check size={14} /> 儲存</button>
+    </div>
+  </div>);
+};
+
+
+/* ════════════════════ SERVICE LIST ════════════════════ */
+const ServiceList = ({ serviceTickets, customers, orders, onSelect, onNew }) => {
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const openCount = serviceTickets.filter(t => t.status === "OPEN").length;
+  const urgentCount = serviceTickets.filter(t => t.priority === "URGENT" && t.status !== "CLOSED" && t.status !== "RESOLVED").length;
+  const warrantyCount = serviceTickets.filter(t => t.type === "WARRANTY" && !["CLOSED","RESOLVED"].includes(t.status)).length;
+  const totalSN = orders.reduce((s, o) => s + (o.items || []).reduce((s2, it) => s2 + (it.serial_numbers || []).filter(Boolean).length, 0), 0);
+  const filtered = serviceTickets.filter(t => {
+    if (filterStatus && t.status !== filterStatus) return false;
+    if (filterType && t.type !== filterType) return false;
+    if (search) { const q = search.toLowerCase(); const c = customers.find(x => x.id === t.customer_id); return t.id.toLowerCase().includes(q) || (t.serial_number||"").toLowerCase().includes(q) || (c?.company_name||"").toLowerCase().includes(q) || (t.title||"").toLowerCase().includes(q); }
+    return true;
+  });
+  const getSS = (code) => SERVICE_STATUSES.find(s => s.code === code) || {};
+  const getST = (code) => SERVICE_TYPES.find(s => s.code === code) || {};
+  const getSP = (code) => SERVICE_PRIORITIES.find(s => s.code === code) || {};
+  return (
+    <div className="fade-in">
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+        <h2 style={{ fontSize:20, fontWeight:700 }}><Wrench size={22} style={{ marginRight:8, verticalAlign:"middle" }} />售後服務管理</h2>
+        <button className="btn btn-primary" onClick={onNew}><Plus size={16} /> 新增服務單</button>
+      </div>
+      <div className="kpi-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12, marginBottom:20 }}>
+        <Card><div style={{ fontSize:12, color:S.textMuted }}>待處理</div><div style={{ fontSize:24, fontWeight:700, color:"#F59E0B" }}>{openCount}</div></Card>
+        <Card><div style={{ fontSize:12, color:S.textMuted }}>緊急件</div><div style={{ fontSize:24, fontWeight:700, color:S.danger }}>{urgentCount}</div></Card>
+        <Card><div style={{ fontSize:12, color:S.textMuted }}>保固維修中</div><div style={{ fontSize:24, fontWeight:700, color:"#22C55E" }}>{warrantyCount}</div></Card>
+        <Card><div style={{ fontSize:12, color:S.textMuted }}>設備總數 (SN)</div><div style={{ fontSize:24, fontWeight:700, color:S.primary }}>{totalSN}</div></Card>
+      </div>
+      <Card>
+        <div className="filter-row" style={{ display:"flex", gap:10, marginBottom:16 }}>
+          <div style={{ flex:1, position:"relative" }}><Search size={16} style={{ position:"absolute", left:10, top:10, color:S.textMuted }} /><input className="input" placeholder="搜尋服務單號/SN/客戶/標題..." value={search} onChange={e => setSearch(e.target.value)} style={{ paddingLeft:34 }} /></div>
+          <select className="input" style={{ width:140 }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}><option value="">全部狀態</option>{SERVICE_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select>
+          <select className="input" style={{ width:140 }} value={filterType} onChange={e => setFilterType(e.target.value)}><option value="">全部類型</option>{SERVICE_TYPES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select>
+        </div>
+        <table className="table"><thead><tr><th>服務單號</th><th>客戶</th><th>設備 SN</th><th>類型</th><th>標題</th><th>優先</th><th>狀態</th><th>建立日期</th></tr></thead>
+        <tbody>{filtered.length === 0 ? <tr><td colSpan={8} style={{ textAlign:"center", padding:32, color:S.textMuted }}>無服務紀錄</td></tr> : filtered.map(t => {
+          const c = customers.find(x => x.id === t.customer_id);
+          const ss = getSS(t.status); const st = getST(t.type); const sp = getSP(t.priority);
+          return (<tr key={t.id} className="clickable-row" onClick={() => onSelect(t.id)}>
+            <td style={{ fontFamily:"monospace", fontWeight:600 }}>{t.id}</td>
+            <td>{c?.company_name || t.customer_id}</td>
+            <td>{t.serial_number ? <span className="sn-tag"><Hash size={10} />{t.serial_number}</span> : "—"}</td>
+            <td><Badge style={{ background: st.color + "22", color: st.color }}>{st.label}</Badge></td>
+            <td style={{ maxWidth:200, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{t.title}</td>
+            <td><Badge style={{ background: sp.bg, color: sp.color }}>{sp.label}</Badge></td>
+            <td><Badge style={{ background: ss.bg, color: ss.color }}>{ss.label}</Badge></td>
+            <td>{t.created_date}</td>
+          </tr>);
+        })}</tbody></table>
+      </Card>
+    </div>
+  );
+};
+
+
+/* ════════════════════ SERVICE FORM ════════════════════ */
+const ServiceForm = ({ ticket, customers, orders, allSNs, onSave, onBack }) => {
+  const isNew = !ticket;
+  const [form, setForm] = useState(ticket || { id: "", customer_id: "", order_id: "", serial_number: "", type: "INSTALL", priority: "NORMAL", status: "OPEN", title: "", description: "", assigned_to: "", created_date: new Date().toISOString().slice(0,10), resolved_date: "", warranty_start: "", warranty_end: "", notes: "" });
+  const set = (k, v) => {
+    const u = { ...form, [k]: v };
+    if (k === "warranty_start" && v) { const d = new Date(v); d.setFullYear(d.getFullYear() + 1); u.warranty_end = d.toISOString().slice(0,10); }
+    if (k === "customer_id") { u.serial_number = ""; u.order_id = ""; }
+    if (k === "serial_number" && v) { const m = allSNs.find(s => s.sn === v); if (m) { u.customer_id = m.customer_id; u.order_id = m.order_id; } }
+    setForm(u);
+  };
+  const custSNs = allSNs.filter(s => !form.customer_id || s.customer_id === form.customer_id);
+  const warrantyDays = form.warranty_end ? Math.ceil((new Date(form.warranty_end) - new Date()) / 86400000) : null;
+  const warrantyOk = warrantyDays !== null && warrantyDays > 0;
+  const save = () => {
+    const t = { ...form };
+    if (isNew) { const d = new Date().toISOString().slice(0,10).replace(/-/g,""); const seq = String(Math.floor(Math.random()*900)+100); t.id = "SVC-" + d + "-" + seq; }
+    onSave(t); onBack();
+  };
+  const F = ({ label, children, span }) => <div style={{ gridColumn: span ? "span " + span : undefined }}><label className="label">{label}</label>{children}</div>;
+  return (
+    <div className="fade-in">
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:20 }}>
+        <button className="btn btn-sm" onClick={onBack}><ArrowLeft size={16} /></button>
+        <h2 style={{ fontSize:20, fontWeight:700 }}><Wrench size={20} style={{ marginRight:8 }} />{isNew ? "新增服務單" : "編輯服務單 " + form.id}</h2>
+      </div>
+      <Card>
+        <div className="form-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:16 }}>
+          <F label="客戶"><select className="input" value={form.customer_id} onChange={e => set("customer_id", e.target.value)}><option value="">選擇客戶</option>{customers.map(c => <option key={c.id} value={c.id}>{c.company_name}</option>)}</select></F>
+          <F label="設備序號 (SN)"><select className="input" value={form.serial_number} onChange={e => set("serial_number", e.target.value)}><option value="">選擇 SN</option>{custSNs.map(s => <option key={s.sn} value={s.sn}>{s.sn} ({s.product_name})</option>)}</select></F>
+          <F label="關聯訂單"><input className="input" value={form.order_id} readOnly style={{ background:"#F9FAFB" }} /></F>
+          <F label="服務類型"><select className="input" value={form.type} onChange={e => set("type", e.target.value)}>{SERVICE_TYPES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select></F>
+          <F label="優先等級"><select className="input" value={form.priority} onChange={e => set("priority", e.target.value)}>{SERVICE_PRIORITIES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select></F>
+          <F label="狀態"><select className="input" value={form.status} onChange={e => set("status", e.target.value)}>{SERVICE_STATUSES.map(s => <option key={s.code} value={s.code}>{s.label}</option>)}</select></F>
+          <F label="標題" span={3}><input className="input" value={form.title} onChange={e => set("title", e.target.value)} placeholder="簡述問題" /></F>
+          <F label="描述" span={3}><textarea className="input" rows={3} value={form.description} onChange={e => set("description", e.target.value)} /></F>
+          <F label="指派工程師"><input className="input" value={form.assigned_to} onChange={e => set("assigned_to", e.target.value)} placeholder="工程師姓名" /></F>
+          <F label="建立日期"><input className="input" type="date" value={form.created_date} onChange={e => set("created_date", e.target.value)} /></F>
+          <F label="解決日期"><input className="input" type="date" value={form.resolved_date} onChange={e => set("resolved_date", e.target.value)} /></F>
+          <F label="保固起始"><input className="input" type="date" value={form.warranty_start} onChange={e => set("warranty_start", e.target.value)} /></F>
+          <F label="保固截止"><input className="input" type="date" value={form.warranty_end} readOnly style={{ background:"#F9FAFB" }} /></F>
+          <F label="保固狀態">
+            <div style={{ display:"flex", alignItems:"center", gap:8, height:40 }}>
+              <Shield size={18} color={warrantyDays === null ? S.textMuted : warrantyOk ? "#22C55E" : S.danger} />
+              {warrantyDays === null ? <span style={{ color:S.textMuted }}>未設定</span> : warrantyOk ? <span style={{ color:"#22C55E", fontWeight:600 }}>保固中（剩餘 {warrantyDays} 天）</span> : <span style={{ color:S.danger, fontWeight:600 }}>已過保（已逾 {Math.abs(warrantyDays)} 天）</span>}
+            </div>
+          </F>
+          <F label="備註" span={3}><textarea className="input" rows={2} value={form.notes} onChange={e => set("notes", e.target.value)} /></F>
+        </div>
+        <div style={{ display:"flex", justifyContent:"flex-end", gap:10, marginTop:20, paddingTop:16, borderTop:"1px solid " + S.border }}>
+          <button className="btn" onClick={onBack}>取消</button>
+          <button className="btn btn-primary" onClick={save}><Save size={16} /> 儲存</button>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+
+/* ════════════════════ GLOBAL SEARCH ════════════════════ */
+const GlobalSearch = ({ customers, orders, serviceTickets, onGo, onClose }) => {
+  const [q, setQ] = useState("");
+  const results = useMemo(() => {
+    if (!q || q.length < 2) return [];
+    const ql = q.toLowerCase();
+    const r = [];
+    customers.forEach(c => { if ((c.company_name||"").toLowerCase().includes(ql) || (c.company_name_en||"").toLowerCase().includes(ql) || (c.id||"").toLowerCase().includes(ql)) r.push({ type: "客戶", id: c.id, title: c.company_name, sub: c.company_name_en || c.region, page: "customers" }); });
+    orders.forEach(o => { const cn = customers.find(c => c.id === o.customer_id)?.company_name || ""; if ((o.id||"").toLowerCase().includes(ql) || cn.toLowerCase().includes(ql) || (o.customer_po||"").toLowerCase().includes(ql)) r.push({ type: "訂單", id: o.id, title: o.id, sub: cn + " " + (o.customer_po||""), page: "orders" }); });
+    orders.forEach(o => (o.items||[]).forEach(it => (it.serial_numbers||[]).filter(Boolean).forEach(sn => { if (sn.toLowerCase().includes(ql)) r.push({ type: "SN", id: o.id, title: sn, sub: it.product_id + " → " + o.id, page: "orders" }); })));
+    serviceTickets.forEach(t => { if ((t.id||"").toLowerCase().includes(ql) || (t.title||"").toLowerCase().includes(ql) || (t.serial_number||"").toLowerCase().includes(ql)) r.push({ type: "服務", id: t.id, title: t.id, sub: t.title, page: "service" }); });
+    return r.slice(0, 15);
+  }, [q, customers, orders, serviceTickets]);
+  useEffect(() => { const h = (e) => { if (e.key === "Escape") onClose(); }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, [onClose]);
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", paddingTop: 80 }} onClick={onClose}>
+      <div style={{ width: "100%", maxWidth: 560, maxHeight: "70vh", background: "var(--card)", borderRadius: 12, boxShadow: "0 20px 60px rgba(0,0,0,0.3)", overflow: "hidden", display: "flex", flexDirection: "column" }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10 }}>
+          <Search size={20} color={S.textMuted} />
+          <input autoFocus placeholder="搜尋客戶、訂單、SN、服務單..." value={q} onChange={e => setQ(e.target.value)} style={{ flex: 1, border: "none", outline: "none", fontSize: 16, background: "transparent", color: "var(--text)" }} />
+          <kbd style={{ fontSize: 11, padding: "2px 6px", borderRadius: 4, border: "1px solid var(--border)", color: "var(--textSec)" }}>ESC</kbd>
+        </div>
+        <div style={{ overflow: "auto", flex: 1 }}>
+          {q.length < 2 ? <div style={{ padding: 32, textAlign: "center", color: "var(--textSec)", fontSize: 14 }}>輸入 2 個字元以上開始搜尋</div>
+          : results.length === 0 ? <div style={{ padding: 32, textAlign: "center", color: "var(--textSec)", fontSize: 14 }}>沒有找到結果</div>
+          : results.map((r, i) => (
+            <div key={i} onClick={() => { onGo(r.page, r.id); onClose(); }} style={{ padding: "12px 20px", cursor: "pointer", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 12 }}
+              onMouseEnter={e => e.currentTarget.style.background = "var(--hover)"} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <Badge bg={r.type === "客戶" ? "#DBEAFE" : r.type === "訂單" ? "#EDE9FE" : r.type === "SN" ? "#F0F4FF" : "#FEF3C7"}
+                color={r.type === "客戶" ? "#1E40AF" : r.type === "訂單" ? "#5B21B6" : r.type === "SN" ? "#1E40AF" : "#92400E"}>{r.type}</Badge>
+              <div style={{ flex: 1 }}><div style={{ fontWeight: 600, fontSize: 14, color: "var(--text)" }}>{r.title}</div><div style={{ fontSize: 12, color: "var(--textSec)" }}>{r.sub}</div></div>
+              <ChevronRight size={14} color="var(--textSec)" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ════════════════════ MAIN APP ════════════════════ */
+
+const SEED_SERVICE_TICKETS = [
+  { id: "SVC-20250205-001", customer_id: "CUST-006", order_id: "SO-20241220-001", serial_number: "SA-162B-2024-045", type: "INSTALL", priority: "NORMAL", status: "RESOLVED", title: "SA-162B 安裝調試", description: "GIGABYTE 新竹廠 SA-162B 安裝調試與驗收", assigned_to: "陳工程師", created_date: "2025-02-05", resolved_date: "2025-02-06", warranty_start: "2025-02-06", warranty_end: "2026-02-06", notes: "安裝順利，客戶已驗收" },
+  { id: "SVC-20250207-001", customer_id: "CUST-006", order_id: "SO-20241220-001", serial_number: "SA-162B-2024-046", type: "INSTALL", priority: "HIGH", status: "IN_PROGRESS", title: "SA-162B #2 安裝調試", description: "GIGABYTE 第二台 SA-162B 安裝中", assigned_to: "林工程師", created_date: "2025-02-07", resolved_date: "", warranty_start: "", warranty_end: "", notes: "" },
+  { id: "SVC-20250201-001", customer_id: "CUST-005", order_id: "SO-20250110-001", serial_number: "SA-102-2025-001", type: "SUPPORT", priority: "URGENT", status: "OPEN", title: "SA-102 測試數據異常", description: "NVIDIA 反映 SA-102 熱通量測試數據偏差超過 5%，需緊急排查", assigned_to: "", created_date: "2025-02-01", resolved_date: "", warranty_start: "2025-01-15", warranty_end: "2026-01-15", notes: "客戶要求 48hr 內回應" },
+];
+
+function App() {
+  const { mode, toggle: toggleTheme } = useTheme();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [page, setPage] = useState("dashboard");
+  const [customers, setCustomers] = useLocalState("customers", SEED_CUSTOMERS);
+  const [orders, setOrders] = useLocalState("orders", SEED_ORDERS);
+  const [payments, setPayments] = useLocalState("payments", SEED_PAYMENTS);
+  const [shipments, setShipments] = useLocalState("shipments", SEED_SHIPMENTS);
+  const [serviceTickets, setServiceTickets] = useLocalState("serviceTickets", SEED_SERVICE_TICKETS);
+  const [selectedId, setSelectedId] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const nav = [
+    { id: "dashboard", label: "儀表板", icon: <LayoutDashboard size={20} /> },
+    { id: "customers", label: "客戶管理", icon: <Users size={20} /> },
+    { id: "orders", label: "訂單管理", icon: <ClipboardList size={20} /> },
+    { id: "payments", label: "收款管理", icon: <CreditCard size={20} />, badge: payments.filter(p => p.status === "OVERDUE").length },
+    { id: "shipping", label: "出貨管理", icon: <Truck size={20} /> },
+    { id: "service", label: "售後服務", icon: <Wrench size={20} />, badge: serviceTickets.filter(t => t.status === "OPEN").length },
+  ];
+
+  const goTo = (p, id = null) => { setPage(p); setSelectedId(id); };
+  useEffect(() => { const h = (e) => { if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSearchOpen(true); } }; window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h); }, []);
+  const addServiceTicket = (t) => setServiceTickets(prev => [...prev, t]);
+  const updateServiceTicket = (t) => setServiceTickets(prev => prev.map(x => x.id === t.id ? t : x));
+  const allSNs = useMemo(() => collectAllSNs(orders, customers), [orders, customers]);
+
+  const saveCustomer = (c) => { if (!c.id) { c.id = `C${String(customers.length + 1).padStart(3, "0")}`; c.contacts = c.contacts || []; setCustomers(p => [...p, c]); } else setCustomers(p => p.map(x => x.id === c.id ? c : x)); };
+  const deleteCustomer = (id) => { setCustomers(p => p.filter(x => x.id !== id)); goTo("customers"); };
+
+  const saveOrder = (o) => {
+    const exists = orders.find(x => x.id === o.id);
+    if (!exists) {
+      const addDays = (d, n) => { const dt = new Date(d); dt.setDate(dt.getDate() + n); return dt.toISOString().slice(0, 10); };
+      const newPays = [
+        { id: `PAY-${Date.now()}-1`, order_id: o.id, type: "訂金", amount: Math.round(o.total / 2), due_date: addDays(o.order_date, 7), status: "PENDING", received_date: "", received_amount: 0, bank_ref: "", notes: "" },
+        { id: `PAY-${Date.now()}-2`, order_id: o.id, type: "尾款", amount: Math.round(o.total / 2), due_date: addDays(o.expected_ship_date, -3), status: "PENDING", received_date: "", received_amount: 0, bank_ref: "", notes: "" },
+      ];
+      setOrders(p => [o, ...p]); setPayments(p => [...p, ...newPays]); setSelectedId(o.id);
+    } else setOrders(p => p.map(x => x.id === o.id ? o : x));
+  };
+  const deleteOrder = (id) => { setOrders(p => p.filter(x => x.id !== id)); setPayments(p => p.filter(x => x.order_id !== id)); goTo("orders"); };
+
+  const updatePayment = (id, data) => setPayments(p => p.map(x => x.id === id ? { ...x, ...data } : x));
+
+  const addShipment = (sh) => setShipments(p => [...p, sh]);
+  const updateShipment = (id, data) => setShipments(p => p.map(x => x.id === id ? { ...x, ...data } : x));
+
+  const activeAlerts = useMemo(() => {
+    const op = payments.filter(p => p.status === "OVERDUE").length;
+    const od = orders.filter(o => !["COMPLETED","CANCELLED","SHIPPED"].includes(o.status) && daysDiff(o.expected_ship_date) < 0).length;
+    return op + od;
+  }, [payments, orders]);
+
+  return (
+    <div style={{ fontFamily: S.font }} data-theme={mode}>
+      <style>{css}</style>
+
+      {/* Header */}
+      <header style={{ height: 60, background: "var(--header)", position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, display: "flex", alignItems: "center", padding: "0 20px", gap: 12 }}>
+        <button style={{ background: "none", color: "#fff", padding: 4 }} onClick={() => setSidebarOpen(p => !p)}><Menu size={22} /></button>
+        <div style={{ color: "#fff" }}><div style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.2 }}>LVI 訂單管理</div><div style={{ fontSize: 10, opacity: 0.6, letterSpacing: 1 }}>Long Victory Instruments</div></div>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Search + Theme + Alert */}
+            <button onClick={() => setSearchOpen(true)} style={{ background: "rgba(255,255,255,0.15)", border: "none", borderRadius: 8, padding: "6px 12px", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, color: "#fff", fontSize: 13 }} className="desktop-only"><Search size={14} /> <span style={{ opacity: 0.7 }}>搜尋 ⌘K</span></button>
+            <button onClick={() => setSearchOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }} className="mobile-only"><Search size={20} color="#fff" /></button>
+            <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }}>{mode === "dark" ? <Sun size={20} color="#FBBF24" /> : <Moon size={20} color="#fff" />}</button>
+            {activeAlerts > 0 && <div style={{ position: "relative", cursor: "pointer" }} onClick={() => goTo("dashboard")}><Bell size={20} color="#fff" /><span style={{ position: "absolute", top: -4, right: -4, width: 16, height: 16, borderRadius: 8, background: S.danger, color: "#fff", fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center" }}>{activeAlerts}</span></div>}
+          <div style={{ width: 32, height: 32, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 13, fontWeight: 700 }}>M</div>
+        </div>
+      </header>
+
+      {/* Sidebar */}
+      <aside className="sidebar-desktop" style={{ width: sidebarOpen ? 220 : 0, background: "var(--sidebar)", borderRight: "1px solid var(--border)", position: "fixed", left: 0, top: 60, bottom: 0, zIndex: 40, overflow: "hidden", transition: "width 0.2s" }}>
+        <nav style={{ padding: "16px 8px" }}>
+          {nav.map(n => (
+            <button key={n.id} onClick={() => goTo(n.id)} style={{
+              width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
+              borderRadius: 8, background: page.startsWith(n.id) ? (mode === "dark" ? "rgba(124,58,237,0.15)" : `${S.secondary}12`) : "transparent",
+              color: page.startsWith(n.id) ? S.secondary : "var(--textSec)", fontWeight: page.startsWith(n.id) ? 600 : 400,
+              fontSize: 14, transition: "all 0.15s", marginBottom: 2, position: "relative",
+            }}>
+              {n.icon} <span style={{ whiteSpace: "nowrap" }}>{n.label}</span>
+              {n.badge > 0 && <span style={{ marginLeft: "auto", background: S.danger, color: "#fff", fontSize: 10, fontWeight: 700, padding: "1px 6px", borderRadius: 8 }}>{n.badge}</span>}
+            </button>
+          ))}
+        </nav>
+        <div style={{ position: "absolute", bottom: 16, left: 0, right: 0, textAlign: "center" }}><div style={{ fontSize: 10, color: S.textMuted }}>Phase 3 · v3.0</div>
+          <button onClick={() => { if(confirm("確定清除所有資料並重設？")) clearAllData(); }} style={{ marginTop: 6, background: "none", border: "none", fontSize: 10, color: S.textMuted, cursor: "pointer", textDecoration: "underline" }}>重設資料</div></div>
+      </aside>
+
+      {/* Main */}
+      <main className="main-content" style={{ marginLeft: sidebarOpen ? 220 : 0, marginTop: 60, padding: 24, minHeight: "calc(100vh - 60px)", paddingBottom: 80, background: "var(--bg)", transition: "margin-left 0.2s" }}>
+        {page === "dashboard" && <Dashboard customers={customers} orders={orders} payments={payments} shipments={shipments} serviceTickets={serviceTickets} />}
+
+        {page === "customers" && !selectedId && <CustomerList customers={customers} onSelect={id => goTo("customers", id)} onAdd={() => goTo("customer-new")} />}
+        {page === "customers" && selectedId && <CustomerDetail customer={customers.find(c => c.id === selectedId) || {}} orders={orders} onBack={() => goTo("customers")} onSave={saveCustomer} onDelete={deleteCustomer} />}
+        {page === "customer-new" && <CustomerDetail customer={{ company_name: "", company_name_en: "", customer_type: "NORMAL", region: "TW", industry: "", phone: "", website: "", notes: "", contacts: [] }} orders={[]} onBack={() => goTo("customers")} onSave={c => { saveCustomer(c); goTo("customers"); }} onDelete={() => {}} />}
+
+        {page === "orders" && !selectedId && <OrderList orders={orders} customers={customers} payments={payments} onSelect={id => goTo("orders", id)} onAdd={() => goTo("order-new")} />}
+        {page === "orders" && selectedId && <OrderDetail order={orders.find(o => o.id === selectedId) || {}} customers={customers} payments={payments} shipments={shipments} onBack={() => goTo("orders")} onSave={saveOrder} onDelete={deleteOrder} />}
+        {page === "order-new" && <OrderDetail serviceTickets={[]} order={{ customer_id: "", customer_po: "", order_date: today(), status: "PENDING", currency: "TWD", items: [{ product_id: "", product_name: "", qty: 1, unit_price: 0, amount: 0, serial_numbers: [] }], subtotal: 0, tax: 0, total: 0, payment_terms: "T/T 50%+50%", delivery_terms: "FOB_TW", expected_ship_date: "", ship_to: "", is_urgent: false, notes: "" }} customers={customers} payments={payments} shipments={[]} onBack={() => goTo("orders")} onSave={o => { saveOrder(o); goTo("orders", o.id); }} onDelete={() => {}} />}
+
+        {page === "payments" && <PaymentList payments={payments} orders={orders} customers={customers} onUpdate={updatePayment} />}
+
+        {page === "shipping" && <ShippingList shipments={shipments} orders={orders} customers={customers} onAdd={addShipment} onUpdate={(id, data) => updateShipment(id, data)} />}
+
+        {page === "service" && !selectedId && <ServiceList serviceTickets={serviceTickets} customers={customers} orders={orders} onSelect={id => goTo("service", id)} onNew={() => goTo("service-new")} />}
+        {page === "service" && selectedId && (() => { const t = serviceTickets.find(x => x.id === selectedId); return t ? <ServiceForm ticket={t} customers={customers} orders={orders} allSNs={allSNs} onSave={updateServiceTicket} onBack={() => goTo("service")} /> : null; })()}
+        {page === "service-new" && <ServiceForm ticket={null} customers={customers} orders={orders} allSNs={allSNs} onSave={t => { addServiceTicket(t); goTo("service"); }} onBack={() => goTo("service")} />}
+      </main>
+
+      {/* Bottom Nav (Mobile) */}
+      <div className="bottom-nav">
+          <button onClick={() => goTo("dashboard")} className={page.startsWith("dashboard") ? "active" : ""}><LayoutDashboard size={20} />儀表板</button>
+          <button onClick={() => goTo("customers")} className={page.startsWith("customers") ? "active" : ""}><Users size={20} />客戶</button>
+          <button onClick={() => goTo("orders")} className={page.startsWith("orders") ? "active" : ""}><ClipboardList size={20} />訂單</button>
+          <button onClick={() => goTo("payments")} className={page.startsWith("payments") ? "active" : ""}><CreditCard size={20} />收款</button>
+          <button onClick={() => goTo("service")} className={page.startsWith("service") ? "active" : ""}><Wrench size={20} />服務{serviceTickets.filter(t => t.status === "OPEN").length > 0 && <span className="nav-badge">{serviceTickets.filter(t => t.status === "OPEN").length}</span>}</button>
+      </div>
+
+      {/* Global Search Modal */}
+      {searchOpen && <GlobalSearch customers={customers} orders={orders} serviceTickets={serviceTickets} onGo={goTo} onClose={() => setSearchOpen(false)} />}
+    </div>
+  );
+}
+
+
+// Mount
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(App));
+
+// Hide splash
+setTimeout(() => {
+  const s = document.getElementById("splash");
+  if (s) { s.classList.add("hide"); setTimeout(() => s.remove(), 300); }
+}, 800);
+  </script>
+
+  <script>
+    // Service Worker for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `
+          const CACHE = 'lvi-v3';
+          self.addEventListener('install', e => { self.skipWaiting(); });
+          self.addEventListener('activate', e => {
+            e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))));
+          });
+          self.addEventListener('fetch', e => {
+            if (e.request.method !== 'GET') return;
+            e.respondWith(
+              fetch(e.request).then(r => {
+                const clone = r.clone();
+                caches.open(CACHE).then(c => c.put(e.request, clone));
+                return r;
+              }).catch(() => caches.match(e.request))
+            );
+          });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
